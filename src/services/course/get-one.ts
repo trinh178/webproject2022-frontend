@@ -102,10 +102,10 @@ function mapping(res: ResponseWrapperProps<CourseGetOneResponseProps>) {
             })),
             questions: c.attributes.questions.map<EduContentQuestionProps>(q => ({
                 correctAnswer: {
-                    imgUrl: "http://localhost:1337" + q.correct_answer.img.data.attributes.url,
+                    imgUrl: "https://webproject2022-admin.herokuapp.com" + q.correct_answer.img.data.attributes.url,
                 },
                 incorrectAnswer: {
-                    imgUrl: "http://localhost:1337" + q.incorrect_answer.img.data.attributes.url,
+                    imgUrl: "https://webproject2022-admin.herokuapp.com" + q.incorrect_answer.img.data.attributes.url,
                 },
             }))
         }))

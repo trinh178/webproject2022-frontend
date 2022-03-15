@@ -52,14 +52,14 @@ export default function App() {
     }
   })
   useEffect(() => {
-    fetch(`http://localhost:1337/api/contents/2?${bb}`)
+    fetch(`https://webproject2022-admin.herokuapp.com/api/contents/2?${bb}`)
       .then(response => response.json())
       .then(json => console.log(json))
       .catch(err => console.error(err));
   }, []);
   return (
     <div>
-      <a href={`http://localhost:1337/api/courses?${bb}`} >open</a>
+      <a href={`https://webproject2022-admin.herokuapp.com/api/courses?${bb}`} >open</a>
     </div>
   );
 }
