@@ -1,19 +1,14 @@
-export default undefined;
 import * as ecanvas from "libs/ecanvas";
+export default function CanvasScript(
+    __canvas: HTMLCanvasElement,
+    __setProgression: (value: number) => void,
+    __changeText: (text: string) => void,
+    __libs: { ecanvas: typeof ecanvas }
+) : any {
+// =========================================================================================================== \\
+// ================================================== START ================================================== \\
+// =========================================================================================================== \\
 
-const __canvas: HTMLCanvasElement = null;
-const __setProgression: (value: number) => void = null;
-const __changeText: (text: string) => void = null;
-const __libs = { ecanvas };
-/* ========================================================================================== *\
-
-
-/* SYSTEM VARIABLE
-	__canvas: HTMLCanvasElement
-	__setProgression(value: number): value range 0 -> 100
-    __changeText(text: string)
-	__libs: { ecanvas }
-*/
 
 // Scripting..
 const { CircleEObject, ERoom, RectangleEObject } = __libs.ecanvas;
@@ -44,23 +39,12 @@ const rectangle2 = new RectangleEObject({
 }, { allowDragDrop: true });
 
 // Add objects to the room
-room.addObject(circle, 700, 200);
+room.addObject(circle, 1400, 200);
 room.addObject(rectangle, 300, 200);
-room.addObject(rectangle2, 700, 400);
+room.addObject(rectangle2, 1300, 400);
 
 // Events
 room.onUpdate(() => {
-    if (circle.isCollisionObject(rectangle2)) {
-        __setProgression(100);
-    }
-});
-/*
-room.canvas.addEventListener("mousemove", ev => {
-    if (circle.isCollisionObject(rectangle2)) {
-        __setProgression(100);
-    }
-    return;
-
     let progress = 0;
     if (rectangle.isObjectInside(circle) && rectangle.isObjectInside(rectangle2)) {
         progress = 100;
@@ -77,17 +61,13 @@ room.canvas.addEventListener("mousemove", ev => {
     else if (progress > 40 && progress < 60) __changeText("It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using");
     else __changeText("Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of classical Latin");
 });
-*/
 
-/*
 return () => {
     room.destroy();
 };
-*/
 
 
-/* Use this to clean and avoid memory leak
-return () => {
-	// Handle clean
-};
-*/
+// =========================================================================================================== \\
+// =================================================== END =================================================== \\
+// =========================================================================================================== \\
+}

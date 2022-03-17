@@ -2,8 +2,13 @@ import React from "react";
 import "./styles.scss";
 import classNames from "classnames";
 import * as ecanvas from "libs/ecanvas";
-import { EduContentTheoryProps } from "services/course/types";
 import TextTransition from "react-text-transition";
+import CanvasScript from "demo/canvas-script";
+
+export interface EduContentTheoryProps {
+    text: string,
+    canvasScript: string,
+}
 
 interface TheoryContentSlideProps {
     theory: EduContentTheoryProps,
@@ -33,7 +38,7 @@ export default function TheoryContentSlide({ theory, nextHandle }: TheoryContent
     React.useEffect(() => {
         let canvasClear: () => void;
         try {
-            const canvasRunner = new Function("__canvas", "__setProgression", "__changeText", "__libs", theory.canvasScript);
+            const canvasRunner = CanvasScript;
             canvasClear = canvasRunner(canvasRef.current, setProgression, changeText, { ecanvas });
         } catch (e) {
             setCanvasScriptError(e.message || "");
