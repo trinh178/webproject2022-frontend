@@ -41,63 +41,71 @@ export default function QuestionContentSlide({
         <div className="col-12 text-center title">
           Select the design that is most correct
         </div>
-        <div className="col-6 d-flex justify-content-end pe-5 mt-5">
-          <AspectRadioWrapper
-            ratio={{
-              width: 3,
-              height: 2,
-            }}
-          >
-            <div
-              className="answer"
-              onClick={() => {
-                if (isAnswered) return;
-                setIsAnswered(true);
-                setAnsweredIndex(0);
+        <div className="col-5 offset-1">
+          <div className="w-100 pe-5 ps-5 mt-5">
+            <AspectRadioWrapper
+              ratio={{
+                width: 3,
+                height: 2,
               }}
             >
-              <img src={answers.current[0].answer.imgUrl} />
-              {isAnswered && answeredIndex === 0 ? (
-                <FontAwesomeIcon
-                  className={
-                    answers.current[0].isCorrect ? "correct" : "incorrect"
-                  }
-                  icon={
-                    answers.current[0].isCorrect ? faCircleCheck : faCircleXmark
-                  }
-                />
-              ) : null}
-            </div>
-          </AspectRadioWrapper>
+              <div
+                className="answer"
+                onClick={() => {
+                  if (isAnswered) return;
+                  setIsAnswered(true);
+                  setAnsweredIndex(0);
+                }}
+              >
+                <img src={answers.current[0].answer.imgUrl} />
+                {isAnswered && answeredIndex === 0 ? (
+                  <FontAwesomeIcon
+                    className={
+                      answers.current[0].isCorrect ? "correct" : "incorrect"
+                    }
+                    icon={
+                      answers.current[0].isCorrect
+                        ? faCircleCheck
+                        : faCircleXmark
+                    }
+                  />
+                ) : null}
+              </div>
+            </AspectRadioWrapper>
+          </div>
         </div>
-        <div className="col-6 ps-5 mt-5">
-          <AspectRadioWrapper
-            ratio={{
-              width: 3,
-              height: 2,
-            }}
-          >
-            <div
-              className="answer"
-              onClick={() => {
-                if (isAnswered) return;
-                setIsAnswered(true);
-                setAnsweredIndex(1);
+        <div className="col-5">
+          <div className="w-100 ps-5 pe-5 mt-5">
+            <AspectRadioWrapper
+              ratio={{
+                width: 3,
+                height: 2,
               }}
             >
-              <img src={answers.current[1].answer.imgUrl} />
-              {isAnswered && answeredIndex === 1 ? (
-                <FontAwesomeIcon
-                  className={
-                    answers.current[1].isCorrect ? "correct" : "incorrect"
-                  }
-                  icon={
-                    answers.current[1].isCorrect ? faCircleCheck : faCircleXmark
-                  }
-                />
-              ) : null}
-            </div>
-          </AspectRadioWrapper>
+              <div
+                className="answer"
+                onClick={() => {
+                  if (isAnswered) return;
+                  setIsAnswered(true);
+                  setAnsweredIndex(1);
+                }}
+              >
+                <img src={answers.current[1].answer.imgUrl} />
+                {isAnswered && answeredIndex === 1 ? (
+                  <FontAwesomeIcon
+                    className={
+                      answers.current[1].isCorrect ? "correct" : "incorrect"
+                    }
+                    icon={
+                      answers.current[1].isCorrect
+                        ? faCircleCheck
+                        : faCircleXmark
+                    }
+                  />
+                ) : null}
+              </div>
+            </AspectRadioWrapper>
+          </div>
         </div>
       </div>
       <span
