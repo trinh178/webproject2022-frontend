@@ -8,6 +8,7 @@ import {
   faCircleXmark,
 } from "@fortawesome/free-solid-svg-icons";
 import { EduContentQuestionProps } from "services/course/types";
+import AspectRadioWrapper from "shared/components/AspectRadioWrapper";
 
 interface QuestionContentSlideProps {
   question: EduContentQuestionProps;
@@ -41,64 +42,62 @@ export default function QuestionContentSlide({
           Select the design that is most correct
         </div>
         <div className="col-6 d-flex justify-content-end pe-5 mt-5">
-          <div className="answer">
-            <div className="aspect-ratio-container-wrapper">
-              <div className="aspect-ratio-container">
-                <div
-                  className="aspect-ratio-content"
-                  onClick={() => {
-                    if (isAnswered) return;
-                    setIsAnswered(true);
-                    setAnsweredIndex(0);
-                  }}
-                >
-                  <img src={answers.current[0].answer.imgUrl} />
-                  {isAnswered && answeredIndex === 0 ? (
-                    <FontAwesomeIcon
-                      className={
-                        answers.current[0].isCorrect ? "correct" : "incorrect"
-                      }
-                      icon={
-                        answers.current[0].isCorrect
-                          ? faCircleCheck
-                          : faCircleXmark
-                      }
-                    />
-                  ) : null}
-                </div>
-              </div>
+          <AspectRadioWrapper
+            ratio={{
+              width: 3,
+              height: 2,
+            }}
+          >
+            <div
+              className="answer"
+              onClick={() => {
+                if (isAnswered) return;
+                setIsAnswered(true);
+                setAnsweredIndex(0);
+              }}
+            >
+              <img src={answers.current[0].answer.imgUrl} />
+              {isAnswered && answeredIndex === 0 ? (
+                <FontAwesomeIcon
+                  className={
+                    answers.current[0].isCorrect ? "correct" : "incorrect"
+                  }
+                  icon={
+                    answers.current[0].isCorrect ? faCircleCheck : faCircleXmark
+                  }
+                />
+              ) : null}
             </div>
-          </div>
+          </AspectRadioWrapper>
         </div>
         <div className="col-6 ps-5 mt-5">
-          <div className="answer">
-            <div className="aspect-ratio-container-wrapper">
-              <div className="aspect-ratio-container">
-                <div
-                  className="aspect-ratio-content"
-                  onClick={() => {
-                    if (isAnswered) return;
-                    setIsAnswered(true);
-                    setAnsweredIndex(1);
-                  }}
-                >
-                  <img src={answers.current[1].answer.imgUrl} />
-                  {isAnswered && answeredIndex === 1 ? (
-                    <FontAwesomeIcon
-                      className={
-                        answers.current[1].isCorrect ? "correct" : "incorrect"
-                      }
-                      icon={
-                        answers.current[1].isCorrect
-                          ? faCircleCheck
-                          : faCircleXmark
-                      }
-                    />
-                  ) : null}
-                </div>
-              </div>
+          <AspectRadioWrapper
+            ratio={{
+              width: 3,
+              height: 2,
+            }}
+          >
+            <div
+              className="answer"
+              onClick={() => {
+                if (isAnswered) return;
+                setIsAnswered(true);
+                setAnsweredIndex(1);
+              }}
+            >
+              <img src={answers.current[1].answer.imgUrl} />
+              {isAnswered && answeredIndex === 1 ? (
+                <FontAwesomeIcon
+                  className={
+                    answers.current[1].isCorrect ? "correct" : "incorrect"
+                  }
+                  icon={
+                    answers.current[1].isCorrect ? faCircleCheck : faCircleXmark
+                  }
+                />
+              ) : null}
             </div>
-          </div>
+          </AspectRadioWrapper>
         </div>
       </div>
       <span
