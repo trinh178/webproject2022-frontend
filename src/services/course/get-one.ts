@@ -19,8 +19,8 @@ interface CourseGetOneResponseProps {
           slug: string;
           theories: {
             id: number;
-            text: string;
-            canvas_script: string;
+            initial_text: string;
+            animation_script: string;
           }[];
           questions: {
             id: number;
@@ -117,8 +117,8 @@ function mapping(
       name: c.attributes.name,
       slug: c.attributes.slug,
       theories: c.attributes.theories.map<EduContentTheoryProps>((t) => ({
-        text: t.text,
-        canvasScript: t.canvas_script,
+        initialText: t.initial_text,
+        animationScript: t.animation_script,
       })),
       questions: c.attributes.questions.map<EduContentQuestionProps>((q) => ({
         correctAnswer: {

@@ -21,7 +21,7 @@ export default function TheoryContentSlide({
 
   // Progression, text and next button
   const [progress, setProgress] = React.useState<number>(0);
-  const [text, setText] = React.useState<string>(theory.text);
+  const [text, setText] = React.useState<string>(theory.initialText);
   const changeText = (t: string) => {
     if (t === text) return;
     setText(t);
@@ -44,7 +44,7 @@ export default function TheoryContentSlide({
         "__setProgression",
         "__changeText",
         "__libs",
-        theory.canvasScript
+        theory.animationScript
       );
       animationClear = animationRunner(
         animationContainerRef.current,

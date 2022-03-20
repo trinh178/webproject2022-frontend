@@ -6,8 +6,8 @@ export interface EduContentQuestionProps {
     incorrectAnswer: EduContentQuestionAnswerProps,
 }
 export interface EduContentTheoryProps {
-    text: string,
-    canvasScript: string,
+    initialText: string,
+    animationScript: string,
 }
 export interface EduContentProps {
     name: string,
