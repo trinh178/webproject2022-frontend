@@ -59,7 +59,7 @@ export default function TheoryContentSlide({
     }
     return () => {
       try {
-        animationClear();
+        animationClear!();
       } catch (e) {
         setAnimationScriptError(e.message || "");
         console.error(e);
@@ -74,7 +74,7 @@ export default function TheoryContentSlide({
           <AspectRadioWrapper aspectRadio={ANIMATION_ASPECT_RATIO}>
               <div className="edu-animation-container" ref={animationContainerRef}>
                 {animationScriptError && (
-                  <div className="canvas-error">
+                  <div className="error">
                     Error animation script
                     <p>{animationScriptError}</p>
                   </div>

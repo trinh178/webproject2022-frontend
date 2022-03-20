@@ -6,6 +6,7 @@ import _ from "lodash";
 import { TheoryContentSlide, QuestionContentSlide } from "./components";
 import * as courseService from "services/course";
 import { EduCourseProps } from "services/course/types";
+import CourseIntro from "./components/CourseIntro";
 
 type EduContextStateType = "Theory" | "Question";
 interface CoursePageProps {
@@ -79,13 +80,15 @@ export default function Loader() {
     const { slug } = useParams();
     const [ course, setCourse ] = React.useState<EduCourseProps>(null);
     const [ loading, setLoading ] = React.useState<boolean>(false);
+    const [ isStarted, setIsStarted ] = React.useState<boolean>(false);
 
-    React.useEffect(() => {
+    const start = React.useCallback(() => {
         setLoading(true);
         courseService.getOne(slug)
             .then(res => {
                 setCourse(res);
                 setLoading(false);
+                setIsStarted(true);
             })
             .catch(err => {
                 console.error(err)
@@ -93,6 +96,15 @@ export default function Loader() {
             });
     }, []);
 
-    if (!course) return <div>Loading..</div>;
+    if (!isStarted)
+        return <CourseIntro
+            title="Basic Graphic Design Principles"
+            posterUrl="/img/basic-graphic-design-principles.png"
+            description="Lorem ipsum dolor sit amet consectetur adipisicing elit. Magni alias eveniet repudiandae itaque hic facere assumenda, quo nobis? Perferendis placeat praesentium modi autem fugit eos cupiditate qui est eius. Consequuntur!"
+            onStart={() => {
+                start();
+            }}
+            loading={loading} />
+            
     return <Page course={course} />
 }

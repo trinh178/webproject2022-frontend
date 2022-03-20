@@ -1,0 +1,41 @@
+.course-intro {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    .poster {
+        margin-top: 100px;
+        width: 710px;
+        height: 362px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        position: relative;
+        img {
+            width: 100%;
+            position: absolute;
+            z-index: -1;
+        }
+        .title {
+            padding: 20px;
+            background-color: white;
+            font-size: 30px;
+            text-transform: capitalize;
+            font-weight: bold;
+        }
+    }
+    .description {
+        margin-top: 40px;
+        padding: 0 30%;
+        text-align: center;
+    }
+    .go-btn {
+        margin-top: 20px;
+        background-color: black;
+        padding: 10px 30px;
+        color: white;
+        border-radius: 50px;
+        font-weight: bold;
+        cursor: pointer;
+    }
+}
