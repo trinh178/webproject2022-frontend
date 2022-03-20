@@ -44,7 +44,7 @@ export default function QuestionContentSlide({
         <div className="col-5 offset-1">
           <div className="w-100 pe-5 ps-5 mt-5">
             <AspectRadioWrapper
-              ratio={{
+              aspectRadio={{
                 width: 3,
                 height: 2,
               }}
@@ -77,7 +77,7 @@ export default function QuestionContentSlide({
         <div className="col-5">
           <div className="w-100 ps-5 pe-5 mt-5">
             <AspectRadioWrapper
-              ratio={{
+              aspectRadio={{
                 width: 3,
                 height: 2,
               }}

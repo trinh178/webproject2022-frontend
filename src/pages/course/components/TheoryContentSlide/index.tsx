@@ -6,6 +6,8 @@ import { EduContentTheoryProps } from "services/course/types";
 import TextTransition from "react-text-transition";
 import AspectRadioWrapper from "shared/components/AspectRadioWrapper";
 
+const ANIMATION_ASPECT_RATIO = 1600 / 500;
+
 interface TheoryContentSlideProps {
   theory: EduContentTheoryProps;
   nextHandle: () => void;
@@ -15,8 +17,7 @@ export default function TheoryContentSlide({
   theory,
   nextHandle,
 }: TheoryContentSlideProps) {
-  const canvasContainerRef = React.useRef<HTMLDivElement>(null);
-  const canvasRef = React.useRef<HTMLCanvasElement>(null);
+  const animationContainerRef = React.useRef<HTMLDivElement>(null);
 
   // Progression, text and next button
   const [progress, setProgress] = React.useState<number>(0);
@@ -31,34 +32,36 @@ export default function TheoryContentSlide({
     if (progess === 100) setShowNextBtn(true);
     else setShowNextBtn(false);
   };
-  const [canvasScriptError, setCanvasScriptError] = React.useState<string>("");
+  const [animationScriptError, setAnimationScriptError] = React.useState<string>("");
 
   // Side effects
   React.useEffect(() => {
-    let canvasClear: () => void;
+    let animationClear: () => void;
     try {
-      const canvasRunner = new Function(
-        "__canvas",
+      const animationRunner = new Function(
+        "__container",
+        "__containerAspectRatio",
         "__setProgression",
         "__changeText",
         "__libs",
         theory.canvasScript
       );
-      canvasClear = canvasRunner(
-        canvasRef.current,
+      animationClear = animationRunner(
+        animationContainerRef.current,
+        ANIMATION_ASPECT_RATIO,
         setProgression,
         changeText,
         { ecanvas }
       );
     } catch (e) {
-      setCanvasScriptError(e.message || "");
+      setAnimationScriptError(e.message || "");
       console.error(e);
     }
     return () => {
       try {
-        canvasClear();
+        animationClear();
       } catch (e) {
-        setCanvasScriptError(e.message || "");
+        setAnimationScriptError(e.message || "");
         console.error(e);
       }
     };
@@ -68,22 +71,16 @@ export default function TheoryContentSlide({
     <div className="theory-content-slide">
       {
         <div className="theory">
-          <div className="edu-animation" ref={canvasContainerRef}>
-            <AspectRadioWrapper
-              ratio={{
-                width: 1600,
-                height: 500,
-              }}
-            >
-              <canvas ref={canvasRef} width={1600} height={500} />
-              {canvasScriptError && (
-                <div className="canvas-error">
-                  Error canvas script
-                  <p>{canvasScriptError}</p>
-                </div>
-              )}
+          <AspectRadioWrapper aspectRadio={ANIMATION_ASPECT_RATIO}>
+              <div className="edu-animation-container" ref={animationContainerRef}>
+                {animationScriptError && (
+                  <div className="canvas-error">
+                    Error animation script
+                    <p>{animationScriptError}</p>
+                  </div>
+                )}
+              </div>
             </AspectRadioWrapper>
-          </div>
           <div className="desc row">
             <div className="edu-text col-10">
               <TextTransition text={text} />

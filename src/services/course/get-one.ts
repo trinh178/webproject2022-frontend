@@ -89,7 +89,7 @@ export default async function api(slug: string): Promise<EduCourseProps> {
     },
   });
   const res = await fetch(
-    `https://webproject2022-admin.herokuapp.com/api/courses?${query}`
+    `${process.env.REACT_APP_END_POINT}/api/courses?${query}`
   );
   const data = await res.json();
   const mappedData = mapping(data);

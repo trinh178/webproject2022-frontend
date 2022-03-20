@@ -1,21 +1,26 @@
+import { isNumber, isObject } from "lodash";
 import { PropsWithChildren } from "react";
 interface AspectRadioWrapperProps {
-  ratio: {
+  aspectRadio: number | {
     width: number;
     height: number;
   };
 }
 export default function AspectRadioWrapper({
-  ratio,
+  aspectRadio,
   children,
 }: PropsWithChildren<AspectRadioWrapperProps>) {
+  let f = aspectRadio;
+  if (typeof aspectRadio === 'object') {
+    f = aspectRadio.width / aspectRadio.height;
+  }
   return (
     <div
       id="aspect-ratio-container-wrapper"
       style={{
         position: "relative",
         width: "100%",
-        paddingBottom: `${100 / (ratio.width / ratio.height)}%`,
+        paddingBottom: `${100 / (f as number)}%`,
       }}
     >
       <div
