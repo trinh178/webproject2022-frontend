@@ -36,7 +36,7 @@ export default function QuestionContentSlide({
   );
 
   return (
-    <div className="question-content-slide">
+    <div className="question-content-slide slide-in-bottom">
       <div className="question row g-0">
         <div className="col-12 text-center title">
           Select the design that is most correct
@@ -61,7 +61,7 @@ export default function QuestionContentSlide({
                 {isAnswered && answeredIndex === 0 ? (
                   <FontAwesomeIcon
                     className={
-                      answers.current[0].isCorrect ? "correct" : "incorrect"
+                      answers.current[0].isCorrect ? "correct scale-up-center" : "incorrect scale-up-center"
                     }
                     icon={
                       answers.current[0].isCorrect
@@ -94,7 +94,7 @@ export default function QuestionContentSlide({
                 {isAnswered && answeredIndex === 1 ? (
                   <FontAwesomeIcon
                     className={
-                      answers.current[1].isCorrect ? "correct" : "incorrect"
+                      answers.current[1].isCorrect ? "correct scale-up-center" : "incorrect scale-up-center"
                     }
                     icon={
                       answers.current[1].isCorrect
@@ -109,7 +109,7 @@ export default function QuestionContentSlide({
         </div>
       </div>
       <span
-        className={classNames("next-btn", "mt-5", { "d-none": !isAnswered })}
+        className={classNames("next-btn", "mt-5", { "slide-out-bottom": !isAnswered, "slide-in-bottom": isAnswered })}
         onClick={() => nextHandle()}
       >
         Tiếp theo

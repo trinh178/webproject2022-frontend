@@ -68,7 +68,7 @@ export default function TheoryContentSlide({
   }, [theory]);
 
   return (
-    <div className="theory-content-slide">
+    <div className="theory-content-slide slide-in-bottom">
       {
         <div className="theory">
           <AspectRadioWrapper aspectRadio={ANIMATION_ASPECT_RATIO}>
@@ -90,7 +90,7 @@ export default function TheoryContentSlide({
         </div>
       }
       <span
-        className={classNames("next-btn", { "d-none": !showNextBtn })}
+        className={classNames("next-btn", { "slide-out-bottom": !showNextBtn, "slide-in-bottom": showNextBtn })}
         onClick={() => nextHandle()}
       >
         Tiếp theo
