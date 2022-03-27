@@ -59,7 +59,7 @@ export default function TheoryContentSlide({
     }
     return () => {
       try {
-        animationClear!();
+        animationClear?.();
       } catch (e) {
         setAnimationScriptError(e.message || "");
         console.error(e);

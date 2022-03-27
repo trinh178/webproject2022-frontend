@@ -11,9 +11,9 @@ interface TableOfEduContentsProps {
 }
 
 export default function TableOfEduContents(props: TableOfEduContentsProps & HTMLProps<HTMLDivElement>) {
-    const { currentCourseState, eduContents, currentEduContentIndex } = props;
+    const { currentCourseState, eduContents, currentEduContentIndex, ...divProps } = props;
     return (
-        <div {...props} className={classNames(props.className, "table-of-educontents")}>
+        <div {...divProps} className={classNames(props.className, "table-of-educontents")}>
         {
             eduContents.map((ec, i) => <div
                 key={ec.slug}

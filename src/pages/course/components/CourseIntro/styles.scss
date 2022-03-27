@@ -4,7 +4,7 @@
     align-items: center;
 
     .poster {
-        margin-top: 100px;
+        margin-top: 5vh;
         width: 710px;
         height: 362px;
         display: flex;
@@ -17,7 +17,7 @@
             z-index: -1;
         }
         .title {
-            padding: 20px;
+            padding: 2vh 2vw;
             background-color: white;
             font-size: 30px;
             text-transform: capitalize;
@@ -25,17 +25,8 @@
         }
     }
     .description {
-        margin-top: 40px;
+        margin-top: 3vh;
         padding: 0 30%;
         text-align: center;
-    }
-    .go-btn {
-        margin-top: 20px;
-        background-color: black;
-        padding: 10px 30px;
-        color: white;
-        border-radius: 50px;
-        font-weight: bold;
-        cursor: pointer;
     }
 }

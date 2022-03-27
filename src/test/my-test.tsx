@@ -8,7 +8,6 @@ func(1, 2, 3);
 */
 
 function A(props: SamuiSlideComponentProps) {
-  console.log(props);
   return (
     <div>a<button onClick={props.slideNext}>next</button></div>
   );

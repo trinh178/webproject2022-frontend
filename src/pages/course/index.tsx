@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import "./styles.scss";
 import { useParams } from "react-router-dom";
 import classNames from "classnames";
@@ -8,8 +8,9 @@ import * as courseService from "services/course";
 import { EduCourseProps } from "services/course/types";
 import CourseIntro from "./components/CourseIntro";
 import TableOfEduContents from "./components/TableOfEduContents";
-import ReportSlide from "./components/ReportSlide";
+import ReportSlide, { ContentReportProps } from "./components/ReportSlide";
 import SamuiSlideProvider, { SamuiSlideComponentProps } from "shared/components/SamuiSlideProvider";
+import { useAsyncFn } from "react-use";
 
 export type CourseStateType = "Study" | "Report";
 type StudyStateType = "Theory" | "Question";
@@ -25,6 +26,21 @@ function Page({ course }: CoursePageProps) {
     const [currentStudyState, setCurrentStudyState] = React.useState<StudyStateType>("Theory");
     const [currentEduContentTheoryIndex, setCurrentEduContentTheoryIndex] = React.useState<number>(0);
     const [currentEduContentQuestionIndex, setCurrentEduContentQuestionIndex] = React.useState<number>(0);
+
+    const [courseReport] = React.useState<ContentReportProps[]>(
+        course.contents.map(c => ({
+            content: c,
+            questionsResults: [],
+        }))
+    );
+
+    const reset = () => {
+        setCurrentEduContentIndex(0);
+        setCurrentCourseState("Study");
+        setCurrentStudyState("Theory");
+        setCurrentEduContentTheoryIndex(0);
+        setCurrentEduContentQuestionIndex(0);
+    };
 
     const handleFinish = () => {
         setCurrentCourseState("Report");
@@ -77,12 +93,23 @@ function Page({ course }: CoursePageProps) {
                                 <QuestionContentSlide
                                     key={currentEduContentQuestionIndex}
                                     question={currentEduContent.questions[currentEduContentQuestionIndex]}
-                                    nextHandle={handleNext} /> :
+                                    nextHandle={handleNext}
+                                    anwseredCorrectHandle={() => {
+                                        courseReport[currentEduContentIndex].questionsResults[currentEduContentQuestionIndex] = true;
+                                    }}
+                                    anwseredIncorrectHandle={() => {
+                                        courseReport[currentEduContentIndex].questionsResults[currentEduContentQuestionIndex] = false;
+                                    }} /> :
                             null
                         ) :
                         currentCourseState === "Report" ?
                         (
-                            <ReportSlide />
+                            <ReportSlide
+                                courseReport={courseReport}
+                                onLearnFromScratch={() => {
+                                    reset();
+                                }}    
+                            />
                         ) :
                         null
                     }
@@ -97,32 +124,53 @@ interface IntroProps {
 }
 function Intro({ slideNext, setCourse }: SamuiSlideComponentProps & IntroProps) {
     const { slug } = useParams();
-    const [ loading, setLoading ] = React.useState<boolean>(false);
 
+    /* Manual
+    const [ isMounted, setIsMounted ] = React.useState<boolean>(false);
+    const [ loading, setLoading ] = React.useState<boolean>(false);
     const start = React.useCallback(() => {
+        setIsMounted(true);
+        if (loading) return;
         setLoading(true);
         courseService.getOne(slug)
             .then(res => {
-                setTimeout(() => {
-                    setCourse(res);
-                    setLoading(false);
-                    slideNext();
-                }, 1000);
+                if (isMounted) return;
+                setCourse(res);
+                setLoading(false);
+                slideNext();
             })
             .catch(err => {
+                if (isMounted) return;
                 console.error(err)
                 setLoading(false);
             });
     }, []);
+    useEffect(() => {
+        return () => {
+            setIsMounted(false);
+        };
+    }, []);
+    */
+
+    // Use sync hook
+    const [courseData, fetchCourseData] = useAsyncFn(async() => {
+        try {
+            const res = await courseService.getOne(slug);
+            setCourse(res);
+            slideNext();
+            return res;
+        } catch (err) {
+            console.error(err)
+            return null;
+        }
+    });
 
     return <CourseIntro
         title="Basic Graphic Design Principles"
         posterUrl="/img/basic-graphic-design-principles.png"
         description="Lorem ipsum dolor sit amet consectetur adipisicing elit. Magni alias eveniet repudiandae itaque hic facere assumenda, quo nobis? Perferendis placeat praesentium modi autem fugit eos cupiditate qui est eius. Consequuntur!"
-        onStart={() => {
-            start();
-        }}
-        loading={loading} />
+        onStart={() => fetchCourseData()}
+        loading={courseData.loading} />
 }
 
 ///////////////

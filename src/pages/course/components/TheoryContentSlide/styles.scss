@@ -1,4 +1,4 @@
-.theory-content-slide {  
+.theory-content-slide {
   .theory {
     .edu-animation-container {
       width: 100%;
@@ -13,16 +13,19 @@
         p {
           color: red;
           font-weight: normal;
-          padding-left: 2em;
+          padding-left: 1vw;
         }
       }
     }
     .desc {
-      margin-top: 20px;
-
+      pointer-events: none;
+      margin-top: 1vh;
+      .edu-text {
+        font-size: 1.4em;
+      }
       .progression {
         text-align: right;
-        font-size: 3em;
+        font-size: 4em;
         font-weight: bold;
       }
     }

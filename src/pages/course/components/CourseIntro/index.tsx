@@ -22,7 +22,7 @@ export default function CourseIntro({
                 <div className="title">{title}</div>
             </div>
             <div className="description">{description}</div>
-            <div className="go-btn" onClick={() => onStart()}>{ loading ? "Starting.." : "Start"}</div>
+            <div className="edu-btn mt-4" onClick={() => onStart()}>{ loading ? "Starting.." : "Start"}</div>
         </div>
     );
 }
