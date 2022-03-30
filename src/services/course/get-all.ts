@@ -2,10 +2,10 @@ import qs from "qs";
 import { EduCoursePreviewProps } from "./types";
 
 interface CourseGetAllResponseProps {
-    id: number,
+    id: number;
     attributes: {
-        name: string,
-        slug: string,
+        name: string;
+        slug: string;
     },
 }
 

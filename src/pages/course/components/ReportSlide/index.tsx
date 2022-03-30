@@ -1,21 +1,17 @@
 import React from "react";
 import "./styles.scss";
 import classNames from "classnames";
-import { EduContentProps } from "services/course/types";
-export interface ContentReportProps {
-    content: EduContentProps;
-    questionsResults: boolean[];
-}
+import { EduContentProps, EduContentReportProps, EduCourseProps, EduCourseReportProps } from "services/course/types";
 interface ReportSlideProps {
-    courseReport: ContentReportProps[];
-    onLearnFromScratch: () => void,
+    course: EduCourseProps;
+    courseReports: EduCourseReportProps;
+    onStudyFromScratch: () => void;
+    onStudyUnfinishContent: () => void;
 }
-export default function ReportSlide({ courseReport, onLearnFromScratch }: ReportSlideProps) {
-    console.log(courseReport);
-
+export default function ReportSlide({ course, courseReports, onStudyFromScratch, onStudyUnfinishContent }: ReportSlideProps) {
     let totalQuestions = 0;
     let nCorrectQuestions = 0;
-    for (const cr of courseReport) {
+    for (const cr of courseReports.contentReports) {
         totalQuestions += cr.questionsResults.length;
         nCorrectQuestions += cr.questionsResults.filter(qr => qr === true).length;
     }
@@ -35,11 +31,11 @@ export default function ReportSlide({ courseReport, onLearnFromScratch }: Report
                 </thead>
                 <tbody>
                     {
-                        courseReport.map(cr => {
+                        courseReports.contentReports.map((cr, i) => {
                             const nCorrect = cr.questionsResults.filter(qr => qr === true).length;
-                            return <tr key={cr.content.slug}>
+                            return <tr key={course.contents[i].slug}>
                                 <td className="text-end pe-2 border-end">
-                                    {cr.content.name}
+                                    {course.contents[i].name}
                                 </td>
                                 <td className="ps-2">
                                     {`${nCorrect} / ${cr.questionsResults.length}`}
@@ -48,17 +44,22 @@ export default function ReportSlide({ courseReport, onLearnFromScratch }: Report
                         })
                     }
                     <tr>
-                        <td className="text-end pe-2 pt-5">
+                        {
+                            nCorrectQuestions !== totalQuestions &&
+                                <td className="text-end pe-2 pt-5">
+                                    <button
+                                        className="edu-btn"
+                                        onClick={() => onStudyUnfinishContent()}>
+                                        Học lại bài sai
+                                    </button>
+                                </td>
+                        }
+                        <td
+                            className={classNames("ps-2 pt-5", {"text-center": nCorrectQuestions === totalQuestions})}
+                            colSpan={nCorrectQuestions === totalQuestions ? 2 : 1}>
                             <button
                                 className="edu-btn"
-                                onClick={() => onLearnFromScratch()}>
-                                Học lại bài sai
-                            </button>
-                        </td>
-                        <td className="ps-2 pt-5">
-                            <button
-                                className="edu-btn"
-                                onClick={() => onLearnFromScratch()}>
+                                onClick={() => onStudyFromScratch()}>
                                 Học lại từ đầu
                             </button>
                         </td>
