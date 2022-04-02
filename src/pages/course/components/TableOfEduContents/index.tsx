@@ -2,7 +2,7 @@ import { EduContentReportProps, EduContentProps, EduCourseProps, EduCourseReport
 import classNames from "classnames";
 import React, { HTMLProps } from "react";
 import "./styles.scss";
-import { CourseStateType } from "pages/course";
+import { CourseStateType } from "pages/course/containers/Course";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faCircleCheck,

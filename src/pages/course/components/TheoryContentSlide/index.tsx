@@ -29,7 +29,7 @@ export default function TheoryContentSlide({
   const [showNextBtn, setShowNextBtn] = React.useState<boolean>(false);
   const setProgression = (progess: number) => {
     setProgress(progess);
-    if (progess === 100) setShowNextBtn(true);
+    if (progess >= 100) setShowNextBtn(true);
     else setShowNextBtn(false);
   };
   const [animationScriptError, setAnimationScriptError] = React.useState<string>("");

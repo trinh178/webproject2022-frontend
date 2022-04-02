@@ -8,7 +8,7 @@ import Toolbar from "shared/components/Toolbar";
 import Footer from "shared/components/Footer";
 
 import CoursesPage from "pages/courses";
-import CoursePage from "pages/course";
+import CoursePage from "pages/course/containers";
 import MyCanvas from "test/my-canvas";
 import MyTest from "test/my-test";
 

@@ -29,4 +29,12 @@
         padding: 0 30%;
         text-align: center;
     }
+    .actions {
+        display: flex;
+        gap: 1vw;
+        .edu-btn {
+            width: 11em;
+            text-align: center;
+        }
+    }
 }

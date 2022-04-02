@@ -51,9 +51,11 @@ export default function CourseIntro({
                 <div className="title">{title}</div>
             </div>
             <div className="description">{description}</div>
-            {
-                latestCourseReportloading ? "loading.." : renderButton()
-            }
+            <div className="actions">
+                {
+                    latestCourseReportloading ? "loading.." : renderButton()
+                }
+            </div>
         </div>
     );
 }

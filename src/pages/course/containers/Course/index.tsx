@@ -1,76 +1,22 @@
-import React, { useEffect } from "react";
+import React from "react";
 import "./styles.scss";
-import { useParams } from "react-router-dom";
-import classNames from "classnames";
 import _, { isNumber } from "lodash";
-import { TheoryContentSlide, QuestionContentSlide } from "./components";
-import * as courseService from "services/course";
-import { EduContentReportProps, EduCourseProps, EduCourseReportProps, EduReportType } from "services/course/types";
-import CourseIntro from "./components/CourseIntro";
-import TableOfEduContents from "./components/TableOfEduContents";
-import ReportSlide from "./components/ReportSlide";
-import SamuiSlideProvider, { SamuiSlideComponentProps } from "shared/components/SamuiSlideProvider";
-import { useAsync, useAsyncFn } from "react-use";
-
-let testId = 1;
-function getTotalCourseReports(): number {
-    return Number.parseInt(localStorage.getItem("__totalCourseReports")) || 0;
-}
-function getCourseReportByLatest(): EduCourseReportProps {
-    const latestCourseReport = JSON.parse(localStorage.getItem("__latestCourseReport")) as EduCourseReportProps;
-    return latestCourseReport;
-}
-function updateCourseReport(courseReport: EduCourseReportProps) {
-    // update by id if server
-    localStorage.setItem("__latestCourseReport", JSON.stringify(courseReport));
-}
-function createCourseReport(
-    type: EduReportType,
-    course: EduCourseProps): EduCourseReportProps {
-    const latestCourseReport = getCourseReportByLatest();
-    if (latestCourseReport?.studyStatus === 'NOT_STARTED') {
-        //alert('error');
-        return latestCourseReport; // TODO
-    }
-
-    let cr: EduCourseReportProps;
-    if (type === 'STUDY_FROM_SCRATCH') {
-        cr = {
-            id: (testId++).toString(),
-            contentReports: course.contents.map(c => ({
-                questionsResults: c.questions.map(q => false),
-                studyStatus: 'NOT_STARTED',
-            })),
-            studyStatus: 'NOT_STARTED',
-            reportType: type,
-        };
-    } else if (type === 'STUDY_UNFINISHED_CONTENTS') {
-        if (!latestCourseReport) alert("error latestCourseReport");
-        cr = {
-            id: (testId++).toString(),
-            contentReports: latestCourseReport.contentReports.map(c => ({
-                questionsResults: c.questionsResults.map(q => c.studyStatus === 'STUDIED_UNFINISHED' ? false : q),
-                studyStatus: c.studyStatus === 'STUDIED_UNFINISHED' ? 'NOT_STARTED' : c.studyStatus,
-            })),
-            studyStatus: 'NOT_STARTED',
-            reportType: type,
-        };
-    }
-    localStorage.setItem("__latestCourseReport", JSON.stringify(cr));
-    localStorage.setItem("__totalCourseReports", ((Number.parseInt(localStorage.getItem("__totalCourseReports"))  || 0) + 1).toString());
-    return cr;
-}
+import { TheoryContentSlide, QuestionContentSlide } from "../../components";
+import { EduCourseProps, EduCourseReportProps } from "services/course/types";
+import TableOfEduContents from "../../components/TableOfEduContents";
+import ReportSlide from "../../components/ReportSlide";
+import { createCourseReport, getTotalCourseReports, updateCourseReport } from "..";
 
 export type CourseStateType = "Study" | "Report";
 export type StudyStateType = "Theory" | "Question";
-export type StudyAction = "STUDY_FROM_SCRATCH" | "CONTINUE_STUDY" | "STUDY_UNFINISHED_CONTENT";
-interface CoursePageProps {
+export type StudyAction = "STUDY_FROM_SCRATCH" | "CONTINUE_STUDY" | "STUDY_UNFINISHED_CONTENTS";
+interface CourseProps {
     course: EduCourseProps;
     latestCourseReport: EduCourseReportProps;
     initialtotalCourseReports: number;
     initialStudyAction: StudyAction;
 }
-function Page({ course, latestCourseReport, initialtotalCourseReports, initialStudyAction }: CoursePageProps) {
+export default function Course({ course, latestCourseReport, initialtotalCourseReports, initialStudyAction }: CourseProps) {
     // Validation
     if (!course) return null;
     if (!initialStudyAction || (initialStudyAction === 'CONTINUE_STUDY' && !latestCourseReport)) return null;
@@ -185,20 +131,16 @@ function Page({ course, latestCourseReport, initialtotalCourseReports, initialSt
     React.useEffect(() => {
         if (!isInitialized) return;
 
-        if (currentCourseState === 'Study') {
-            // Start study status for course
-            currentCourseReport.studyStatus = 'STUDYING';
-            setCurrentCourseReport({...currentCourseReport});  // Update state
-        } else if (currentCourseState === 'Report') {
+        if (currentCourseState === 'Report') {
             setTotalCourseReports(getTotalCourseReports());
         }
-    }, [currentStudyState]);
+    }, [isInitialized, currentStudyState]);
 
     React.useEffect(() => {
         if (!isInitialized) return;
 
         updateCourseReport(currentCourseReport);
-    }, [currentCourseReport]);
+    }, [isInitialized, currentCourseReport]);
 
     // Initialization
     React.useEffect(() => {
@@ -207,7 +149,7 @@ function Page({ course, latestCourseReport, initialtotalCourseReports, initialSt
             studyContinue();
         } else if (initialStudyAction === 'STUDY_FROM_SCRATCH') {
             studyFromScratch();
-        } else if (initialStudyAction === 'STUDY_UNFINISHED_CONTENT') {
+        } else if (initialStudyAction === 'STUDY_UNFINISHED_CONTENTS') {
             studyUnfinishedContent();
         }
         setIsInitialized(true);
@@ -265,124 +207,4 @@ function Page({ course, latestCourseReport, initialtotalCourseReports, initialSt
             </div>
         </div>
     );
-}
-
-interface IntroProps {
-    setCourse: (course: EduCourseProps) => void;
-    setInitialStudyAction: (studyAction: StudyAction) => void;
-    latestCourseReport: EduCourseReportProps;
-    latestCourseReportloading: boolean;
-}
-function Intro({
-    slideNext,
-    setCourse,
-    setInitialStudyAction,
-    latestCourseReport,
-    latestCourseReportloading,
-    }: SamuiSlideComponentProps & IntroProps) {
-    const { slug } = useParams();
-
-    /* Manual
-    const [ isMounted, setIsMounted ] = React.useState<boolean>(false);
-    const [ loading, setLoading ] = React.useState<boolean>(false);
-    const start = React.useCallback(() => {
-        setIsMounted(true);
-        if (loading) return;
-        setLoading(true);
-        courseService.getOne(slug)
-            .then(res => {
-                if (isMounted) return;
-                setCourse(res);
-                setLoading(false);
-                slideNext();
-            })
-            .catch(err => {
-                if (isMounted) return;
-                console.error(err)
-                setLoading(false);
-            });
-    }, []);
-    useEffect(() => {
-        return () => {
-            setIsMounted(false);
-        };
-    }, []);
-    */
-
-    // Use sync hook
-    const [courseLoader, fetchCourse] = useAsyncFn(async() => {
-        try {
-            const res = await courseService.getOne(slug);
-            setCourse(res);
-            slideNext();
-            return res;
-        } catch (err) {
-            console.error(err)
-            return null;
-        }
-    }, []);
-
-    return <CourseIntro
-        title="Basic Graphic Design Principles"
-        posterUrl="/img/basic-graphic-design-principles.png"
-        description="Lorem ipsum dolor sit amet consectetur adipisicing elit. Magni alias eveniet repudiandae itaque hic facere assumenda, quo nobis? Perferendis placeat praesentium modi autem fugit eos cupiditate qui est eius. Consequuntur!"
-        onStart={() => fetchCourse().then(() => setInitialStudyAction('STUDY_FROM_SCRATCH'))}
-        onContinue={() => fetchCourse().then(() => setInitialStudyAction('CONTINUE_STUDY'))}
-        onStudyUnfinished={() => fetchCourse().then(() => setInitialStudyAction('STUDY_UNFINISHED_CONTENT'))}
-        courseLoading={courseLoader.loading}
-        latestCourseReportloading={latestCourseReportloading}
-        latestCourseReport={latestCourseReport} />
-}
-
-///////////////
-export default function Loader() {
-    const [ course, setCourse ] = React.useState<EduCourseProps>(null);
-    const [ initialStudyAction, setInitialStudyAction ] = React.useState<StudyAction>(null);
-
-    // Test
-    const { slug } = useParams();
-    const latestCourseReportLoader = useAsync(async () => {
-        try {
-            const res = await courseService.getOne(slug);
-            return getCourseReportByLatest();
-        } catch (err) {
-            console.error(err)
-            return null;
-        }
-    }, []);
-    const totalCourseReportsLoader = useAsync(async () => {
-        try {
-            const res = await courseService.getOne(slug);
-            return getTotalCourseReports();
-        } catch (err) {
-            console.error(err)
-            return null;
-        }
-    }, []);
-
-    return <SamuiSlideProvider
-        contents={[
-            {
-                key: 'intro',
-                component: (props) =>
-                    <Intro
-                        {...props}
-                        setCourse={setCourse}
-                        setInitialStudyAction={setInitialStudyAction}
-                        latestCourseReport={latestCourseReportLoader.value}
-                        latestCourseReportloading={latestCourseReportLoader.loading} />,
-            },
-            {
-                key: 'course-page',
-                component: () => course
-                                && latestCourseReportLoader.value !== undefined
-                                && totalCourseReportsLoader.value !== undefined
-                                && initialStudyAction &&
-                    <Page
-                        course={course}
-                        latestCourseReport={latestCourseReportLoader.value}
-                        initialtotalCourseReports={totalCourseReportsLoader.value}
-                        initialStudyAction={initialStudyAction} />
-            }
-        ]} />
 }

@@ -11,8 +11,13 @@ interface SamuiSlideContentProps {
 }
 interface SamuiSlideProviderProps {
     contents: SamuiSlideContentProps[];
+    slideControlsRef?: React.MutableRefObject<SamuiSlideComponentProps>;
 }
-export default function SamuiSlideProvider({ contents }: SamuiSlideProviderProps) {
+export interface SamuiSlideControlsProps {
+    slidePrevious: () => void;
+    slideNext: () => void;
+}
+export default function SamuiSlideProvider({ contents, slideControlsRef }: SamuiSlideProviderProps) {
     const [currentIndex, setCurrentIndex] = React.useState(0);
     const [beforeIndex, setBeforeIndex] = React.useState(0);
     const previous = () => {
@@ -25,6 +30,13 @@ export default function SamuiSlideProvider({ contents }: SamuiSlideProviderProps
         setBeforeIndex(currentIndex);
         setCurrentIndex(currentIndex + 1);
     };
+    React.useEffect(() => {
+        if (slideControlsRef)
+            slideControlsRef.current = {
+                slidePrevious: previous,
+                slideNext: next,
+            };
+    }, []);
     return (
         <div className="samuislideprovider-container">
             <div className="samuislideprovider-anchor">
