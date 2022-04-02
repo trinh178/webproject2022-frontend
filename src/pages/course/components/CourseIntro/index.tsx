@@ -10,8 +10,8 @@ interface CourseIntroProps {
     onContinue: () => void;
     onStudyUnfinished: () => void;
     courseLoading: boolean;
-    courseReportloading: boolean;
-    courseReport: EduCourseReportProps;
+    latestCourseReportloading: boolean;
+    latestCourseReport: EduCourseReportProps;
 }
 export default function CourseIntro({
     posterUrl,
@@ -21,11 +21,12 @@ export default function CourseIntro({
     onContinue,
     onStudyUnfinished,
     courseLoading,
-    courseReportloading,
-    courseReport,
+    latestCourseReportloading,
+    latestCourseReport,
 }: CourseIntroProps) {
     const renderButton = () => {
-        switch (courseReport.studyStatus) {
+        switch (latestCourseReport?.studyStatus) {
+            case null || undefined:
             case "NOT_STARTED":
                 return <div className="edu-btn mt-4" onClick={() => onStart()}>{ courseLoading ? "Bắt đầu.." : "Bắt đầu"}</div>;
             case "STUDYING":
@@ -51,7 +52,7 @@ export default function CourseIntro({
             </div>
             <div className="description">{description}</div>
             {
-                !courseReportloading && courseReport && renderButton() || "loading.."
+                latestCourseReportloading ? "loading.." : renderButton()
             }
         </div>
     );

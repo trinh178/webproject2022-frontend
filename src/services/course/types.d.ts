@@ -17,6 +17,7 @@ export interface EduContentProps {
 }
 
 export type EduStudyStatus = "NOT_STARTED" | "STUDYING" | "STUDIED_UNFINISHED" | "STUDIED_FININSHED";
+export type EduReportType = "STUDY_FROM_SCRATCH" | "STUDY_UNFINISHED_CONTENTS";
 export interface EduCourseProps {
     name: string;
     slug: string;
@@ -31,6 +32,8 @@ export interface EduContentReportProps {
     studyStatus: EduStudyStatus;
 }
 export interface EduCourseReportProps {
+    id: string,
     contentReports: EduContentReportProps[];
     studyStatus: EduStudyStatus;
+    reportType: EduReportType;
 }

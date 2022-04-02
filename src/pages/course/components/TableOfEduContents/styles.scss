@@ -20,6 +20,17 @@
         height: 2vw;
         outline: 0.1vw solid black;
         text-align: center;
+        /* by process
+        position: relative;
+        .process {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background-color: red;
+        }
+        */
     }
     .title {
         padding-left: 0.5vw;

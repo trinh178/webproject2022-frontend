@@ -4,14 +4,15 @@ import classNames from "classnames";
 import { EduContentProps, EduContentReportProps, EduCourseProps, EduCourseReportProps } from "services/course/types";
 interface ReportSlideProps {
     course: EduCourseProps;
-    courseReports: EduCourseReportProps;
+    courseReport: EduCourseReportProps;
+    totalCourseReports: number;
     onStudyFromScratch: () => void;
     onStudyUnfinishContent: () => void;
 }
-export default function ReportSlide({ course, courseReports, onStudyFromScratch, onStudyUnfinishContent }: ReportSlideProps) {
+export default function ReportSlide({ course, courseReport, totalCourseReports, onStudyFromScratch, onStudyUnfinishContent }: ReportSlideProps) {
     let totalQuestions = 0;
     let nCorrectQuestions = 0;
-    for (const cr of courseReports.contentReports) {
+    for (const cr of courseReport.contentReports) {
         totalQuestions += cr.questionsResults.length;
         nCorrectQuestions += cr.questionsResults.filter(qr => qr === true).length;
     }
@@ -20,6 +21,7 @@ export default function ReportSlide({ course, courseReports, onStudyFromScratch,
         <div className="report-slide slide-in-bottom">
             <h2 className="text-center">Bạn đã trả lời đúng</h2>
             <h1 className="text-center">{`${nCorrectQuestions} / ${totalQuestions}`}</h1>
+            <h6 className="text-center">Sau {totalCourseReports} lần học</h6>
             <br />
             <h5 className="text-center text-decoration-underline">Chi tiết</h5>
             <table className="w-50 m-auto">
@@ -31,7 +33,7 @@ export default function ReportSlide({ course, courseReports, onStudyFromScratch,
                 </thead>
                 <tbody>
                     {
-                        courseReports.contentReports.map((cr, i) => {
+                        courseReport.contentReports.map((cr, i) => {
                             const nCorrect = cr.questionsResults.filter(qr => qr === true).length;
                             return <tr key={course.contents[i].slug}>
                                 <td className="text-end pe-2 border-end">
