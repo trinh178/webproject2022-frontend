@@ -1,7 +1,8 @@
 export default undefined;
 import * as ecanvas from "libs/ecanvas";
 
-const __canvas: HTMLCanvasElement = null;
+const __container: HTMLDivElement = null;
+const __containerAspectRatio: number = 0;
 const __setProgression: (value: number) => void = null;
 const __changeText: (text: string) => void = null;
 const __libs = { ecanvas };
@@ -9,11 +10,21 @@ const __libs = { ecanvas };
 
 
 /* SYSTEM VARIABLE
-	__canvas: HTMLCanvasElement
-	__setProgression(value: number): value range 0 -> 100
-    __changeText(text: string)
-	__libs: { ecanvas }
+	__container: HTMLDivElement,
+    __containerAspectRatio: number,
+    __setProgression: (value: number) => void,
+    __changeText: (text: string) => void,
+    __libs: { ecanvas: typeof ecanvas }
 */
+
+const __canvas = document.createElement("canvas");
+__canvas.style.width = "100%";
+__canvas.style.height = "100%";
+__container.appendChild(__canvas);
+const WIDTH = 2000;
+const HEIGHT = WIDTH / __containerAspectRatio;
+__canvas.width = WIDTH;
+__canvas.height = HEIGHT;
 
 // Scripting..
 const { CircleEObject, ERoom, RectangleEObject } = __libs.ecanvas;
@@ -50,17 +61,6 @@ room.addObject(rectangle2, 700, 400);
 
 // Events
 room.onUpdate(() => {
-    if (circle.isCollisionObject(rectangle2)) {
-        __setProgression(100);
-    }
-});
-/*
-room.canvas.addEventListener("mousemove", ev => {
-    if (circle.isCollisionObject(rectangle2)) {
-        __setProgression(100);
-    }
-    return;
-
     let progress = 0;
     if (rectangle.isObjectInside(circle) && rectangle.isObjectInside(rectangle2)) {
         progress = 100;
@@ -77,7 +77,6 @@ room.canvas.addEventListener("mousemove", ev => {
     else if (progress > 40 && progress < 60) __changeText("It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using");
     else __changeText("Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of classical Latin");
 });
-*/
 
 /*
 return () => {

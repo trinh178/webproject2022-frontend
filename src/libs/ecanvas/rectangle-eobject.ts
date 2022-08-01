@@ -2,13 +2,13 @@ import { EObjectOption } from './types';
 import { EObject } from "./eobject";
 
 interface RectangleOption {
-    width: number,
-    height: number,
-    fillColor?: string,
-    borderColor?: string,
-    borderDashed?: boolean,
-    borderWidth?: number,
-    borderLineDash?: number[],
+    width: number;
+    height: number;
+    fillColor?: string;
+    borderColor?: string;
+    borderDashed?: boolean;
+    borderWidth?: number;
+    borderLineDash?: number[];
 } 
 
 export class RectangleEObject extends EObject {

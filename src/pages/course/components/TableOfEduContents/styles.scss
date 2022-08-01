@@ -1,0 +1,44 @@
+.table-of-educontents {
+    background-color: white;
+    border-right: 4px solid #E5E5E5;
+    padding: 1vw;
+
+    .course-title {
+        text-align: center;
+        text-transform: uppercase;
+        font-weight: bold;
+    }
+    table, tr, td {
+        margin: 0;
+        padding: 0;
+    }
+    table {
+        margin-top: 3vh;
+    }
+    .box {
+        width: 2vw;
+        height: 2vw;
+        outline: 0.1vw solid black;
+        text-align: center;
+        /* by process
+        position: relative;
+        .process {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background-color: red;
+        }
+        */
+    }
+    .title {
+        padding-left: 0.5vw;
+    }
+    .line {
+        width: 0.1vw;
+        height: 2vw;
+        background-color: black;
+        margin: 0 auto;
+    }
+}

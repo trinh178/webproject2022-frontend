@@ -1,0 +1,1 @@
+SERVER CLI: cd ../webproject2022-admin; npm start

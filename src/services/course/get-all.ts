@@ -2,10 +2,10 @@ import qs from "qs";
 import { EduCoursePreviewProps } from "./types";
 
 interface CourseGetAllResponseProps {
-    id: number,
+    id: number;
     attributes: {
-        name: string,
-        slug: string,
+        name: string;
+        slug: string;
     },
 }
 
@@ -13,7 +13,7 @@ export default async function api(): Promise<EduCoursePreviewProps[]> {
     const query: string = qs.stringify({
         fields: ['name', 'slug'],
     });
-    const res = await fetch(`https://webproject2022-admin.herokuapp.com/api/courses?${query}`);
+    const res = await fetch(`${process.env.REACT_APP_END_POINT}/api/courses?${query}`);
     const data = await res.json();
     return mapping(data);
 }

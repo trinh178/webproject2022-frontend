@@ -13,11 +13,15 @@ import AspectRadioWrapper from "shared/components/AspectRadioWrapper";
 interface QuestionContentSlideProps {
   question: EduContentQuestionProps;
   nextHandle: () => void;
+  anwseredCorrectHandle: () => void;
+  anwseredIncorrectHandle: () => void;
 }
 
 export default function QuestionContentSlide({
   question,
   nextHandle,
+  anwseredCorrectHandle,
+  anwseredIncorrectHandle,
 }: QuestionContentSlideProps) {
   const [isAnswered, setIsAnswered] = React.useState<boolean>(false);
   const [answeredIndex, setAnsweredIndex] = React.useState<number>(-1);
@@ -35,8 +39,16 @@ export default function QuestionContentSlide({
     ])
   );
 
+  const selectAnswer = (index: 0 | 1) => {
+    if (isAnswered) return;
+    setAnsweredIndex(index);
+    setIsAnswered(true);
+    if (answers.current[index].isCorrect) anwseredCorrectHandle();
+    else anwseredIncorrectHandle();
+  }
+
   return (
-    <div className="question-content-slide">
+    <div className="question-content-slide slide-in-bottom">
       <div className="question row g-0">
         <div className="col-12 text-center title">
           Select the design that is most correct
@@ -44,24 +56,20 @@ export default function QuestionContentSlide({
         <div className="col-5 offset-1">
           <div className="w-100 pe-5 ps-5 mt-5">
             <AspectRadioWrapper
-              ratio={{
+              aspectRadio={{
                 width: 3,
                 height: 2,
               }}
             >
               <div
                 className="answer"
-                onClick={() => {
-                  if (isAnswered) return;
-                  setIsAnswered(true);
-                  setAnsweredIndex(0);
-                }}
+                onClick={() => selectAnswer(0)}
               >
                 <img src={answers.current[0].answer.imgUrl} />
                 {isAnswered && answeredIndex === 0 ? (
                   <FontAwesomeIcon
                     className={
-                      answers.current[0].isCorrect ? "correct" : "incorrect"
+                      answers.current[0].isCorrect ? "correct scale-up-center" : "incorrect scale-up-center"
                     }
                     icon={
                       answers.current[0].isCorrect
@@ -77,24 +85,20 @@ export default function QuestionContentSlide({
         <div className="col-5">
           <div className="w-100 ps-5 pe-5 mt-5">
             <AspectRadioWrapper
-              ratio={{
+              aspectRadio={{
                 width: 3,
                 height: 2,
               }}
             >
               <div
                 className="answer"
-                onClick={() => {
-                  if (isAnswered) return;
-                  setIsAnswered(true);
-                  setAnsweredIndex(1);
-                }}
+                onClick={() => selectAnswer(1)}
               >
                 <img src={answers.current[1].answer.imgUrl} />
                 {isAnswered && answeredIndex === 1 ? (
                   <FontAwesomeIcon
                     className={
-                      answers.current[1].isCorrect ? "correct" : "incorrect"
+                      answers.current[1].isCorrect ? "correct scale-up-center" : "incorrect scale-up-center"
                     }
                     icon={
                       answers.current[1].isCorrect
@@ -109,7 +113,7 @@ export default function QuestionContentSlide({
         </div>
       </div>
       <span
-        className={classNames("next-btn", "mt-5", { "d-none": !isAnswered })}
+        className={classNames("next-btn", "mt-5", { "slide-out-bottom": !isAnswered, "slide-in-bottom": isAnswered })}
         onClick={() => nextHandle()}
       >
         Tiếp theo

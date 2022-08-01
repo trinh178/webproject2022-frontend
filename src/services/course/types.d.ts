@@ -1,26 +1,39 @@
 export interface EduContentQuestionAnswerProps {
-    imgUrl: string,
+    imgUrl: string;
 }
 export interface EduContentQuestionProps {
-    correctAnswer: EduContentQuestionAnswerProps,
-    incorrectAnswer: EduContentQuestionAnswerProps,
+    correctAnswer: EduContentQuestionAnswerProps;
+    incorrectAnswer: EduContentQuestionAnswerProps;
 }
 export interface EduContentTheoryProps {
-    text: string,
-    canvasScript: string,
+    initialText: string;
+    animationScript: string;
 }
 export interface EduContentProps {
-    name: string,
-    slug: string,
-    theories: EduContentTheoryProps[],
-    questions: EduContentQuestionProps[],
+    name: string;
+    slug: string;
+    theories: EduContentTheoryProps[];
+    questions: EduContentQuestionProps[];
 }
+
+export type EduStudyStatus = "NOT_STARTED" | "STUDYING" | "STUDIED_UNFINISHED" | "STUDIED_FININSHED";
+export type EduReportType = "STUDY_FROM_SCRATCH" | "STUDY_UNFINISHED_CONTENTS";
 export interface EduCourseProps {
-    name: string,
-    slug: string,
-    contents: EduContentProps[],
+    name: string;
+    slug: string;
+    contents: EduContentProps[];
 }
 export interface EduCoursePreviewProps {
-    name: string,
-    slug: string,
+    name: string;
+    slug: string;
+}
+export interface EduContentReportProps {
+    questionsResults: boolean[];
+    studyStatus: EduStudyStatus;
+}
+export interface EduCourseReportProps {
+    id: string,
+    contentReports: EduContentReportProps[];
+    studyStatus: EduStudyStatus;
+    reportType: EduReportType;
 }
