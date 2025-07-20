@@ -66,7 +66,7 @@ export default function Course({
   const studyContinue = () => {
     setPreviousCourseReport(latestCourseReport);
     setCurrentCourseState("Study");
-    setCurrentStudyState("Question"); // Ẩn Theory
+    setCurrentStudyState("Theory");
     setCurrentEduContentTheoryIndex(0);
     setCurrentEduContentQuestionIndex(0);
 
@@ -83,7 +83,7 @@ export default function Course({
   const studyFromScratch = () => {
     setPreviousCourseReport(currentCourseReport);
     setCurrentCourseState("Study");
-    setCurrentStudyState("Question"); // Ẩn Theory
+    setCurrentStudyState("Theory");
     setCurrentEduContentTheoryIndex(0);
     setCurrentEduContentQuestionIndex(0);
 
@@ -99,7 +99,7 @@ export default function Course({
   const studyUnfinishedContent = () => {
     setPreviousCourseReport(currentCourseReport);
     setCurrentCourseState("Study");
-    setCurrentStudyState("Question"); // Ẩn Theory
+    setCurrentStudyState("Theory");
     setCurrentEduContentTheoryIndex(0);
     setCurrentEduContentQuestionIndex(0);
 
@@ -148,28 +148,38 @@ export default function Course({
   };
 
   const nextSlide = () => {
-    if (currentStudyState === "Theory") {
-      if (
-        currentEduContentTheoryIndex + 1 <
-        currentEduContent.theories.length
-      ) {
-        setCurrentEduContentTheoryIndex(currentEduContentTheoryIndex + 1);
-      } else {
-        setCurrentEduContentQuestionIndex(0);
-        setCurrentStudyState("Question");
-      }
-    } else if (currentStudyState === "Question") {
-      if (
-        currentEduContentQuestionIndex + 1 <
-        currentEduContent.questions.length
-      ) {
-        setCurrentEduContentQuestionIndex(currentEduContentQuestionIndex + 1);
-      } else {
-        setCurrentEduContentTheoryIndex(0);
-        // setCurrentStudyState("Theory");
-        nextContent();
-      }
+    if (
+      currentEduContentQuestionIndex + 1 <
+      currentEduContent.questions.length
+    ) {
+      setCurrentEduContentQuestionIndex(currentEduContentQuestionIndex + 1);
+    } else {
+      setCurrentEduContentQuestionIndex(0);
+      nextContent();
     }
+
+    // if (currentStudyState === "Theory") {
+    //   if (
+    //     currentEduContentTheoryIndex + 1 <
+    //     currentEduContent.theories.length
+    //   ) {
+    //     setCurrentEduContentTheoryIndex(currentEduContentTheoryIndex + 1);
+    //   } else {
+    //     setCurrentEduContentQuestionIndex(0);
+    //     setCurrentStudyState("Question");
+    //   }
+    // } else if (currentStudyState === "Question") {
+    //   if (
+    //     currentEduContentQuestionIndex + 1 <
+    //     currentEduContent.questions.length
+    //   ) {
+    //     setCurrentEduContentQuestionIndex(currentEduContentQuestionIndex + 1);
+    //   } else {
+    //     setCurrentEduContentTheoryIndex(0);
+    //     setCurrentStudyState("Theory");
+    //     nextContent();
+    //   }
+    // }
   };
 
   React.useEffect(() => {
@@ -214,14 +224,44 @@ export default function Course({
         </div>
         <div className="slide-container">
           {currentCourseState === "Study" ? (
-            currentStudyState === "Theory" ? (
-              {
-                /* <TheoryContentSlide
-                key={currentEduContentTheoryIndex}
-                theory={currentEduContent.theories[currentEduContentTheoryIndex]}
-                nextHandle={nextSlide}
-              /> */
+            <QuestionContentSlide
+              key={`${currentEduContentIndex}-${currentEduContentQuestionIndex}`}
+              question={
+                currentEduContent.questions[currentEduContentQuestionIndex]
               }
+              nextHandle={nextSlide}
+              anwseredCorrectHandle={() => {
+                currentCourseReport.contentReports[
+                  currentEduContentIndex
+                ].questionsResults[currentEduContentQuestionIndex] = true;
+                setCurrentCourseReport({ ...currentCourseReport });
+              }}
+              anwseredIncorrectHandle={() => {
+                currentCourseReport.contentReports[
+                  currentEduContentIndex
+                ].questionsResults[currentEduContentQuestionIndex] = false;
+                setCurrentCourseReport({ ...currentCourseReport });
+              }}
+            />
+          ) : (
+            <ReportSlide
+              course={course}
+              courseReport={currentCourseReport}
+              totalCourseReports={totalCourseReports}
+              onStudyFromScratch={studyFromScratch}
+              onStudyUnfinishContent={studyUnfinishedContent}
+            />
+          )}
+
+          {/* {currentCourseState === "Study" ? (
+            currentStudyState === "Theory" ? (
+              <TheoryContentSlide
+                key={currentEduContentTheoryIndex}
+                theory={
+                  currentEduContent.theories[currentEduContentTheoryIndex]
+                }
+                nextHandle={nextSlide}
+              />
             ) : currentStudyState === "Question" ? (
               <QuestionContentSlide
                 key={currentEduContentQuestionIndex}
@@ -251,7 +291,7 @@ export default function Course({
               onStudyFromScratch={studyFromScratch}
               onStudyUnfinishContent={studyUnfinishedContent}
             />
-          ) : null}
+          ) : null} */}
         </div>
       </div>
     </div>
