@@ -11,11 +11,12 @@ interface SamuiSlideContentProps {
 }
 interface SamuiSlideProviderProps {
   contents: SamuiSlideContentProps[];
-  slideControlsRef?: React.MutableRefObject<SamuiSlideComponentProps>;
+  slideControlsRef?: React.MutableRefObject<SamuiSlideControlsProps>;
 }
 export interface SamuiSlideControlsProps {
   slidePrevious: () => void;
   slideNext: () => void;
+  slideTo: (index: number) => void;
 }
 export default function SamuiSlideProvider({
   contents,
@@ -33,11 +34,18 @@ export default function SamuiSlideProvider({
     setBeforeIndex(currentIndex);
     setCurrentIndex(currentIndex + 1);
   };
+  // Change slide
+  const slideTo = (index: number) => {
+    if (index < 0 || index >= contents.length || index === currentIndex) return;
+    setBeforeIndex(currentIndex);
+    setCurrentIndex(index);
+  };
   React.useEffect(() => {
     if (slideControlsRef)
       slideControlsRef.current = {
         slidePrevious: previous,
         slideNext: next,
+        slideTo: slideTo,
       };
   }, []);
   return (

@@ -1,40 +1,173 @@
 .course-intro {
+  width: 100%;
+  height: 100%;
+  font-family: "Bahnschrift", Arial, sans-serif;
+  background-color: rgb(242, 242, 242);
+  position: relative;
+  padding: 2rem;
+
+  .logo {
+    width: 64px;
+    position: absolute;
+    top: 1.5rem;
+    left: 1.5rem;
+    font-size: 36px;
+    font-weight: 700;
+    text-shadow: 0.3px 0 rgb(0, 0, 0), -0.3px 0 rgb(0, 0, 0),
+      0 0.3px rgb(0, 0, 0), 0 -0.3px rgb(0, 0, 0);
+    color: rgb(0, 0, 0);
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    line-height: 1.1;
+    transform: scaleX(0.7);
+    transform-origin: left;
+    cursor: pointer;
+  }
+
+  .logo-part {
+    display: block;
+    letter-spacing: 0px;
+  }
+
+  .logo-part:nth-child(2) {
+    margin-top: -10px;
+  }
+
+  .course-content {
+    width: 1300px;
+    height: 360px;
+    margin: 120px auto 2rem;
+    text-align: center;
+  }
+
+  .course-title {
+    font-size: 4rem;
+    color: rgb(0, 0, 0);
+    font-weight: bold;
+    text-shadow: 0.4px 0 rgb(0, 0, 0), -0.4px 0 rgb(0, 0, 0),
+      0 0.4px rgb(0, 0, 0), 0 -0.4px rgb(0, 0, 0);
+    margin-bottom: 2rem;
+    transform: scaleX(0.7);
+    position: relative;
+    z-index: 1;
+  }
+
+  .course-sections {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 2rem;
+    position: relative;
+    z-index: 1;
+  }
+
+  .section-card {
+    width: 200px;
+    height: 200px;
+    border-radius: 15px;
     display: flex;
     flex-direction: column;
     align-items: center;
+    justify-content: center;
+    text-align: center;
+    color: rgb(0, 0, 0);
+    padding: 15px;
+    cursor: pointer;
 
-    .poster {
-        margin-top: 5vh;
-        width: 710px;
-        height: 362px;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        position: relative;
-        img {
-            width: 100%;
-            position: absolute;
-            z-index: -1;
-        }
-        .title {
-            padding: 2vh 2vw;
-            background-color: white;
-            font-size: 30px;
-            text-transform: capitalize;
-            font-weight: bold;
-        }
+    &.align {
+      background-color: rgb(83, 234, 205);
     }
-    .description {
-        margin-top: 3vh;
-        padding: 0 30%;
-        text-align: center;
+
+    &.group {
+      background-color: rgb(237, 242, 25);
     }
-    .actions {
-        display: flex;
-        gap: 1vw;
-        .edu-btn {
-            width: 11em;
-            text-align: center;
+
+    &.build {
+      background-color: rgb(249, 93, 93);
+    }
+
+    img {
+      width: auto;
+      height: 60px;
+      margin-bottom: 30px;
+      display: block;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .content-container {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    h2 {
+      margin: 0;
+      font-size: 30px;
+      font-weight: bold;
+      text-shadow: 0.3px 0 rgb(0, 0, 0), -0.3px 0 rgb(0, 0, 0),
+        0 0.3px rgb(0, 0, 0), 0 -0.3px rgb(0, 0, 0);
+      transform: scaleX(0.7);
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      padding-bottom: 5px;
+    }
+
+    .section-details {
+      font-size: 12px;
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+
+      span {
+        display: inline-block;
+        margin: 0;
+
+        strong {
+          font-weight: bold;
+          text-shadow: 0.1px 0 rgb(0, 0, 0), -0.1px 0 rgb(0, 0, 0),
+            0 0.1px rgb(0, 0, 0), 0 -0.1px rgb(0, 0, 0);
         }
+      }
     }
+
+    &:active {
+      box-shadow: 4px 4px 0px rgb(18, 26, 33);
+      transform: translate(2px, 2px);
+    }
+  }
+
+  .nav-button {
+    width: 32px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: none;
+    border: none;
+    padding: 0;
+    margin: 0 3rem;
+    cursor: pointer;
+  }
+
+  .nav-button img {
+    width: 70%;
+    height: auto;
+    object-fit: contain;
+  }
+
+  .course-icons {
+    position: absolute;
+    bottom: 1rem;
+    left: 1rem;
+    display: flex;
+    gap: 0.5rem;
+    z-index: 1;
+    padding: 0.5rem;
+    border-radius: 4px;
+    align-items: center;
+  }
 }

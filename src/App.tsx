@@ -15,10 +15,8 @@ import MyTest from "test/my-test";
 function App() {
   return (
     <>
-      <div style={{ width: "100%", height: "5vh" }}>
-        <Toolbar />
-      </div>
-      <div style={{ width: "100%", height: "92vh" }}>
+      {/* <div style={{ width: "100%", height: "5vh" }}><Toolbar /></div> */}
+      <div style={{ width: "100%", height: "100%" }}>
         <Routes>
           <Route path="/" element={<MainLayout />}>
             <Route index element={<div>index</div>} />
@@ -30,9 +28,7 @@ function App() {
           </Route>
         </Routes>
       </div>
-      <div style={{ width: "100%", height: "3vh" }}>
-        <Footer />
-      </div>
+      {/* <div style={{ width: "100%", height: "3vh" }}><Footer /></div> */}
     </>
   );
 }

@@ -149,27 +149,11 @@ export default function Loader() {
           key: "intro",
           component: (props) => (
             <CourseIntro
-              title="Basic Graphic Design Principles"
-              posterUrl="/img/basic-graphic-design-principles.png"
-              description="Lorem ipsum dolor sit amet consectetur adipisicing elit. Magni alias eveniet repudiandae itaque hic facere assumenda, quo nobis? Perferendis placeat praesentium modi autem fugit eos cupiditate qui est eius. Consequuntur!"
-              onStart={() =>
-                fetchCourse().then(() =>
-                  setInitialStudyAction("STUDY_FROM_SCRATCH")
-                )
-              }
-              onContinue={() =>
-                fetchCourse().then(() =>
-                  setInitialStudyAction("CONTINUE_STUDY")
-                )
-              }
-              onStudyUnfinished={() =>
-                fetchCourse().then(() =>
-                  setInitialStudyAction("STUDY_UNFINISHED_CONTENTS")
-                )
-              }
+              title="THIẾT KẾ ĐỒ HỌA CƠ BẢN"
+              fetchCourse={fetchCourse}
+              setInitialStudyAction={setInitialStudyAction}
+              slideControlsRef={samuiSlideControlsRef}
               courseLoading={courseLoader.loading}
-              latestCourseReportloading={latestCourseReportLoader.loading}
-              latestCourseReport={latestCourseReportLoader.value}
             />
           ),
         },
@@ -185,6 +169,9 @@ export default function Loader() {
                 latestCourseReport={latestCourseReportLoader.value}
                 initialtotalCourseReports={totalCourseReportsLoader.value}
                 initialStudyAction={initialStudyAction}
+                onGoToIntro={() => {
+                  samuiSlideControlsRef.current?.slideTo(0);
+                }}
               />
             ),
         },
