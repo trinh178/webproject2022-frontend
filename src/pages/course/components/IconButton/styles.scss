@@ -1,0 +1,30 @@
+.icon-button-group {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.icon-button {
+  width: 40px;
+  height: 40px;
+  border: 2px solid rgb(18, 26, 33);
+  background-color: #fff;
+  border-radius: 4px;
+  box-shadow: 4px 4px 0px rgb(18, 26, 33);
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0;
+
+  &:active {
+    box-shadow: 2px 2px 0px rgb(18, 26, 33);
+    transform: translate(2px, 2px);
+  }
+}
+
+.icon-image {
+  width: 32px;
+  height: 32px;
+  object-fit: contain;
+}
