@@ -208,7 +208,7 @@ export default function Course({
 
   const generateBarWidths = () => {
     if (window.innerWidth <= 480) {
-      return Array.from({ length: 5 }, () => getRandomWidth(75, 175));
+      return Array.from({ length: 5 }, () => getRandomWidth(150, 250));
     } else if (window.innerWidth <= 768) {
       return Array.from({ length: 5 }, () => getRandomWidth(200, 350));
     } else {
@@ -220,7 +220,6 @@ export default function Course({
   const originalBarWidthsRef = useRef(barWidths);
   const initialOffsets = [-70, 45, 0, 100, -45];
   const [barOffsets, setBarOffsets] = useState(initialOffsets);
-  const centerIndex = Math.floor(barWidths.length / 2);
   const barRefs = useRef([]);
   const containerRef = useRef(null);
   const [barPoints, setBarPoints] = useState([]);
@@ -275,19 +274,38 @@ export default function Course({
     return () => window.removeEventListener("resize", updateBarPoints);
   }, [barOffsets, barWidths]);
 
+  const handlePointerDown = (e, index) => {
+    e.preventDefault();
+
+    if (e.type === "touchstart") {
+      setDragStartX(e.touches[0].clientX);
+    } else {
+      setDragStartX(e.clientX);
+    }
+
+    setDraggingIndex(index);
+    setDragStartOffset(barOffsets[index]);
+  };
+
   useEffect(() => {
-    const handleMouseMove = (e) => {
+    const handlePointerMove = (e) => {
       if (draggingIndex === null) return;
+
+      let clientX;
+      if (e.type === "touchmove") {
+        clientX = e.touches[0].clientX;
+      } else {
+        clientX = e.clientX;
+      }
+
       const containerRect = containerRef.current.getBoundingClientRect();
-      const dx = e.clientX - dragStartX;
+      const dx = clientX - dragStartX;
 
       const maxOffset = containerRect.width / 2;
       const minOffset = -containerRect.width / 2;
 
       let newOffset = dragStartOffset + dx;
-
       newOffset = Math.round(newOffset / SNAP_GRID_SIZE) * SNAP_GRID_SIZE;
-
       newOffset = Math.min(Math.max(newOffset, minOffset), maxOffset);
 
       setBarOffsets((prev) => {
@@ -297,23 +315,23 @@ export default function Course({
       });
     };
 
-    const handleMouseUp = () => {
+    const handlePointerUp = () => {
       setDraggingIndex(null);
     };
 
-    window.addEventListener("mousemove", handleMouseMove);
-    window.addEventListener("mouseup", handleMouseUp);
+    window.addEventListener("mousemove", handlePointerMove);
+    window.addEventListener("mouseup", handlePointerUp);
+
+    window.addEventListener("touchmove", handlePointerMove, { passive: false });
+    window.addEventListener("touchend", handlePointerUp);
+
     return () => {
-      window.removeEventListener("mousemove", handleMouseMove);
-      window.removeEventListener("mouseup", handleMouseUp);
+      window.removeEventListener("mousemove", handlePointerMove);
+      window.removeEventListener("mouseup", handlePointerUp);
+      window.removeEventListener("touchmove", handlePointerMove);
+      window.removeEventListener("touchend", handlePointerUp);
     };
   }, [draggingIndex, dragStartX, dragStartOffset]);
-
-  const handleMouseDown = (e, index) => {
-    setDraggingIndex(index);
-    setDragStartX(e.clientX);
-    setDragStartOffset(barOffsets[index]);
-  };
 
   useEffect(() => {
     if (barPoints.length !== barWidths.length) return;
@@ -345,23 +363,43 @@ export default function Course({
   const colorFactor = percentage / 100;
   const interpolatedColor = interpolateColor(startColor, endColor, colorFactor);
   const [isTransitioning, setIsTransitioning] = useState(false);
+  const [totalSteps, setTotalSteps] = useState(
+    window.innerWidth <= 480 ? 12 : 20
+  );
+  const [timeLeft, setTimeLeft] = useState(0);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setTotalSteps(window.innerWidth <= 480 ? 12 : 20);
+    };
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   const transitionToScreen = (next: "bar-chart" | "quiz" | "completed") => {
     setIsTransitioning(true);
     setTimeout(() => {
+      if (next === "quiz") {
+        setTimeLeft(20 * 60);
+      }
       setScreenStage(next);
       setIsTransitioning(false);
     }, 500);
   };
 
   const totalQuestions = course.contents.length;
+  // Batch hiện tại (0 = batch đầu)
+  const [currentBatch, setCurrentBatch] = useState(0);
+
+  // Index bắt đầu của batch hiện tại
+  const batchStartIndex = currentBatch * totalSteps;
   // const totalQuestions = course.contents.reduce(
   //   (total, content) => total + content.questions.length,
   //   0
   // );
   const progressText = `${currentEduContentIndex + 1}/${totalQuestions}`;
   const [correctAnswers, setCorrectAnswers] = useState(0);
-  const [timeLeft, setTimeLeft] = useState(30 * 60);
   const [selectedCardIndex, setSelectedCardIndex] = useState<number | null>(
     null
   );
@@ -447,6 +485,21 @@ export default function Course({
     }
 
     setCurrentEduContentIndex(nextIndex);
+
+    if (nextIndex >= batchStartIndex + totalSteps) {
+      setCurrentBatch((prev) => prev + 1);
+    }
+  };
+
+  const handleRestart = () => {
+    setCurrentEduContentIndex(0);
+    setCurrentBatch(0);
+    setAnswersHistory([]);
+    setSelectedCardIndex(null);
+    setIsCompareMode(false);
+    setCorrectAnswers(0);
+    setTimeLeft(20 * 60);
+    transitionToScreen("quiz");
   };
 
   if (!isInitialized) return null;
@@ -473,17 +526,24 @@ export default function Course({
                   <div className="progress-number">{progressText}</div>
                 </div>
                 <div className="progress-bar">
-                  {[...Array(20)].map((_, i) => {
+                  {Array.from({
+                    length: Math.min(
+                      totalSteps,
+                      totalQuestions - batchStartIndex
+                    ),
+                  }).map((_, i) => {
+                    const questionIndex = batchStartIndex + i;
+
                     let bgColor = "rgb(198,198,198)";
 
-                    if (i < currentEduContentIndex) {
+                    if (questionIndex < currentEduContentIndex) {
                       bgColor =
-                        answersHistory[i] === true
+                        answersHistory[questionIndex] === true
                           ? "rgb(83,234,205)"
                           : "rgb(249,93,93)";
                     }
 
-                    if (i === currentEduContentIndex) {
+                    if (questionIndex === currentEduContentIndex) {
                       bgColor = "rgb(237,242,25)";
                     }
 
@@ -491,7 +551,9 @@ export default function Course({
                       <div
                         key={i}
                         className={`progress-square ${
-                          i === currentEduContentIndex ? "active" : ""
+                          questionIndex === currentEduContentIndex
+                            ? "active"
+                            : ""
                         }`}
                         style={{ backgroundColor: bgColor }}
                       />
@@ -551,6 +613,8 @@ export default function Course({
                     onMouseDown={() => setIsCompareMode(true)}
                     onMouseUp={() => setIsCompareMode(false)}
                     onMouseLeave={() => setIsCompareMode(false)}
+                    onTouchStart={() => setIsCompareMode(true)}
+                    onTouchEnd={() => setIsCompareMode(false)}
                   />
                   <Button
                     className=""
@@ -598,7 +662,6 @@ export default function Course({
 
               <div className="bar-chart">
                 {barWidths.map((width, index) => {
-                  const isCenter = index === centerIndex;
                   return (
                     <div
                       key={index}
@@ -610,7 +673,8 @@ export default function Course({
                         cursor: "grab",
                         transition: "transform 0.01s",
                       }}
-                      onMouseDown={(e) => handleMouseDown(e, index)}
+                      onMouseDown={(e) => handlePointerDown(e, index)}
+                      onTouchStart={(e) => handlePointerDown(e, index)}
                     />
                   );
                 })}
@@ -703,7 +767,7 @@ export default function Course({
                 <div className="stat-block">
                   <div className="stat-label">Thời gian</div>
                   <div className="stat-value">
-                    <strong>{formatTimeUsed(30 * 60 - timeLeft)}</strong>
+                    <strong>{formatTimeUsed(20 * 60 - timeLeft)}</strong>
                   </div>
                 </div>
                 <div className="stat-block">
@@ -723,11 +787,7 @@ export default function Course({
                   iconSrc="/img/retry.png"
                   text="Chơi lại"
                   bgColor="#FFF44F"
-                  onClick={() => {
-                    setCurrentEduContentIndex(0);
-                    setCorrectAnswers(0);
-                    transitionToScreen("bar-chart");
-                  }}
+                  onClick={handleRestart}
                 />
                 <Button
                   className=""

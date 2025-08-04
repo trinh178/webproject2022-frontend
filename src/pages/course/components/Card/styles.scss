@@ -73,3 +73,30 @@
     height: 18px;
   }
 }
+
+@media (max-width: 480px) {
+  .card {
+    width: 180px;
+    height: 135px;
+  }
+
+  .left-card {
+    transform: translateX(-100px);
+  }
+
+  .right-card {
+    transform: translateX(100px);
+  }
+
+  .status-icon {
+    bottom: -12px;
+    right: -12px;
+    width: 28px;
+    height: 28px;
+  }
+
+  .status-icon img {
+    width: 14px;
+    height: 14px;
+  }
+}

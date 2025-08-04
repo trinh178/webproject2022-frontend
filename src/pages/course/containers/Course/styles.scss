@@ -294,7 +294,7 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding-top: 50px;
+    padding-top: 40px;
     margin: 0 auto;
 
     .instruction {
@@ -578,18 +578,70 @@
   }
 
   @media (max-width: 480px) {
-    .completion-content {
-      .percentage {
-        font-size: 70px !important;
+    .next-screen,
+    .report-screen {
+      width: 100%;
+    }
+
+    .completion {
+      flex-direction: column;
+
+      .completion-content {
+        flex-direction: row !important;
+        padding: 5px !important;
+
+        .percentage {
+          font-size: 70px !important;
+        }
+
+        .instruction {
+          left: 38.5% !important;
+        }
+
+        .completed-info {
+          width: 180px;
+        }
+
+        .completed-description {
+          width: 180px;
+        }
       }
 
-      .instruction {
-        left: 38.5% !important;
+      .completion-button {
+        position: static !important;
+        margin-top: 30px;
+        display: flex;
+        justify-content: center;
+        width: 100%;
       }
     }
 
     .progress-bar {
       gap: 16px !important;
+    }
+
+    .screen-content {
+      justify-content: flex-start !important;
+    }
+
+    .instruction-section {
+      padding-top: 30px;
+
+      .tooltip-text {
+        width: 250px !important;
+      }
+    }
+
+    .card-container {
+      height: 220px !important;
+    }
+
+    .report-title {
+      font-size: 19px !important;
+    }
+
+    .report-buttons {
+      flex-direction: column;
     }
   }
 }

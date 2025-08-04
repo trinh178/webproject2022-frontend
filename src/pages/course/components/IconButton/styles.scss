@@ -28,3 +28,9 @@
   height: 32px;
   object-fit: contain;
 }
+
+@media (max-width: 480px) {
+  .icon-button-group {
+    flex-direction: row;
+  }
+}
