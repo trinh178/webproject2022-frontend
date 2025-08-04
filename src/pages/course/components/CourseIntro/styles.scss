@@ -3,9 +3,13 @@
   height: 100%;
   font-family: "Bahnschrift", Arial, sans-serif;
   background-color: rgb(242, 242, 242);
+  display: flex;
+  align-items: center;
+  justify-content: center;
   position: relative;
   padding: 2rem;
 
+  /* ---------------- LOGO ---------------- */
   .logo {
     width: 64px;
     position: absolute;
@@ -34,10 +38,11 @@
     margin-top: -10px;
   }
 
+  /* ---------------- COURSE CONTENT ---------------- */
   .course-content {
     width: 1300px;
     height: 360px;
-    margin: 120px auto 2rem;
+    margin: 0 auto;
     text-align: center;
   }
 
@@ -53,6 +58,7 @@
     z-index: 1;
   }
 
+  /* ---------------- SECTIONS ---------------- */
   .course-sections {
     display: flex;
     justify-content: center;
@@ -63,6 +69,7 @@
     z-index: 1;
   }
 
+  /* ---------------- CARD ---------------- */
   .section-card {
     width: 200px;
     height: 200px;
@@ -140,6 +147,7 @@
     }
   }
 
+  /* ---------------- NAV BUTTON ---------------- */
   .nav-button {
     width: 32px;
     height: 48px;
@@ -169,5 +177,49 @@
     padding: 0.5rem;
     border-radius: 4px;
     align-items: center;
+  }
+
+  /* ---------------- ANIMATIONS ---------------- */
+  @keyframes slideInFromRight {
+    from {
+      opacity: 0;
+      transform: translateX(100%);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+
+  @keyframes slideInFromLeft {
+    from {
+      opacity: 0;
+      transform: translateX(-100%);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+
+  .slide-right {
+    animation: slideInFromRight 0.3s ease-in-out;
+  }
+  .slide-left {
+    animation: slideInFromLeft 0.3s ease-in-out;
+  }
+
+  /* ---------------- RESPONSIVE ---------------- */
+  @media (max-width: 480px) {
+    .course-sections {
+      width: 100%;
+      overflow: hidden;
+      justify-content: center;
+      position: relative;
+    }
+
+    .section-card {
+      flex: 0 0 auto;
+    }
   }
 }

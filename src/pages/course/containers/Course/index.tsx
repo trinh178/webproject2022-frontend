@@ -13,7 +13,6 @@ import {
 import Button from "pages/course/components/Button";
 import IconButton from "pages/course/components/IconButton";
 import Card from "pages/course/components/Card";
-import { useNavigate } from "react-router-dom";
 
 export type CourseStateType = "Study" | "Report";
 export type StudyStateType = "Theory" | "Question";
@@ -204,7 +203,21 @@ export default function Course({
     setIsInitialized(true);
   }, []);
 
-  const barWidths = [310, 470, 230, 400, 265];
+  const getRandomWidth = (min: number, max: number) =>
+    Math.floor(Math.random() * (max - min + 1)) + min;
+
+  const generateBarWidths = () => {
+    if (window.innerWidth <= 480) {
+      return Array.from({ length: 5 }, () => getRandomWidth(75, 175));
+    } else if (window.innerWidth <= 768) {
+      return Array.from({ length: 5 }, () => getRandomWidth(200, 350));
+    } else {
+      return Array.from({ length: 5 }, () => getRandomWidth(200, 500));
+    }
+  };
+
+  const [barWidths, setBarWidths] = useState(generateBarWidths());
+  const originalBarWidthsRef = useRef(barWidths);
   const initialOffsets = [-70, 45, 0, 100, -45];
   const [barOffsets, setBarOffsets] = useState(initialOffsets);
   const centerIndex = Math.floor(barWidths.length / 2);
@@ -214,29 +227,53 @@ export default function Course({
   const [draggingIndex, setDraggingIndex] = useState(null);
   const [dragStartX, setDragStartX] = useState(0);
   const [dragStartOffset, setDragStartOffset] = useState(0);
-  const [percentage, setPercentage] = useState(24);
+  const SNAP_GRID_SIZE = 10;
+  const [percentage, setPercentage] = useState(0);
   const iconPaths = ["/img/home.png", "/img/option.png", "/img/flag.png"];
   const [screenStage, setScreenStage] = useState<
     "bar-chart" | "quiz" | "completed"
   >("bar-chart");
-  const navigate = useNavigate();
+
+  useEffect(() => {
+    const handleResize = () => {
+      const newWidths = generateBarWidths();
+      originalBarWidthsRef.current = newWidths;
+      setBarWidths(newWidths);
+    };
+
+    handleResize();
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   useEffect(() => {
     barRefs.current = barRefs.current.slice(0, barWidths.length);
   }, []);
 
-  useEffect(() => {
-    const newPoints = barRefs.current.map((ref, index) => {
+  const updateBarPoints = () => {
+    if (!containerRef.current) return;
+    const containerRect = containerRef.current.getBoundingClientRect();
+
+    const newPoints = barRefs.current.map((ref) => {
       if (!ref) return null;
       const rect = ref.getBoundingClientRect();
+      const relativeX = rect.left - containerRect.left;
+      const relativeY = rect.top - containerRect.top;
       return {
-        x: rect.left - 55,
-        y: rect.top + rect.height - 55,
+        x: relativeX,
+        y: relativeY + rect.height / 2,
       };
     });
 
-    setBarPoints(newPoints);
-  }, [barOffsets]);
+    setBarPoints(newPoints as any);
+  };
+
+  useEffect(() => {
+    updateBarPoints();
+    window.addEventListener("resize", updateBarPoints);
+    return () => window.removeEventListener("resize", updateBarPoints);
+  }, [barOffsets, barWidths]);
 
   useEffect(() => {
     const handleMouseMove = (e) => {
@@ -247,10 +284,11 @@ export default function Course({
       const maxOffset = containerRect.width / 2;
       const minOffset = -containerRect.width / 2;
 
-      const newOffset = Math.min(
-        Math.max(dragStartOffset + dx, minOffset),
-        maxOffset
-      );
+      let newOffset = dragStartOffset + dx;
+
+      newOffset = Math.round(newOffset / SNAP_GRID_SIZE) * SNAP_GRID_SIZE;
+
+      newOffset = Math.min(Math.max(newOffset, minOffset), maxOffset);
 
       setBarOffsets((prev) => {
         const updated = [...prev];
@@ -280,29 +318,20 @@ export default function Course({
   useEffect(() => {
     if (barPoints.length !== barWidths.length) return;
 
-    const centerX = barPoints[centerIndex]?.x;
-    if (centerX == null) return;
+    const avgX =
+      barPoints.reduce((sum, p) => sum + (p?.x || 0), 0) / barPoints.length;
 
-    const totalDeviation = barPoints.reduce((sum, point, index) => {
-      if (!point || index === centerIndex) return sum;
-      return sum + Math.abs(point.x - centerX);
+    const totalDeviation = barPoints.reduce((sum, p) => {
+      if (!p) return sum;
+      return sum + Math.abs(p.x - avgX);
     }, 0);
 
     const MAX_DEVIATION = 800;
-
     let completion = 100 - (totalDeviation / MAX_DEVIATION) * 100;
-    completion = Math.max(24, Math.min(100, Math.round(completion)));
 
+    completion = Math.max(0, Math.min(100, Math.round(completion)));
     setPercentage(completion);
-  }, [barPoints]);
-
-  useEffect(() => {
-    if (percentage === 100) {
-      setBarOffsets((prev) =>
-        prev.map((offset, index) => (index === centerIndex ? offset : 0))
-      );
-    }
-  }, [percentage]);
+  }, [barPoints, barWidths]);
 
   const interpolateColor = (startColor, endColor, factor) => {
     const result = startColor.map((start, i) =>
@@ -313,7 +342,7 @@ export default function Course({
 
   const startColor = [249, 93, 93];
   const endColor = [83, 234, 205];
-  const colorFactor = (percentage - 24) / (100 - 24);
+  const colorFactor = percentage / 100;
   const interpolatedColor = interpolateColor(startColor, endColor, colorFactor);
   const [isTransitioning, setIsTransitioning] = useState(false);
 
@@ -336,6 +365,7 @@ export default function Course({
   const [selectedCardIndex, setSelectedCardIndex] = useState<number | null>(
     null
   );
+  const [answersHistory, setAnswersHistory] = useState<boolean[]>([]);
 
   useEffect(() => {
     if (screenStage === "completed") return;
@@ -394,6 +424,14 @@ export default function Course({
   }, [currentEduContentIndex, currentEduContentQuestionIndex]);
 
   const handleNextQuestion = () => {
+    const isCorrectAnswer = answers[selectedCardIndex]?.isCorrect ?? false;
+
+    setAnswersHistory((prev) => {
+      const newHistory = [...prev];
+      newHistory[currentEduContentIndex] = isCorrectAnswer;
+      return newHistory;
+    });
+
     if (answers[selectedCardIndex]?.isCorrect) {
       setCorrectAnswers((prev) => prev + 1);
     }
@@ -436,27 +474,24 @@ export default function Course({
                 </div>
                 <div className="progress-bar">
                   {[...Array(20)].map((_, i) => {
-                    const colors = [
-                      "rgb(83,234,205)",
-                      "rgb(83,234,205)",
-                      "rgb(249,93,93)",
-                      "rgb(249,93,93)",
-                      "rgb(237,242,25)",
-                    ];
+                    let bgColor = "rgb(198,198,198)";
 
-                    const isCompleted = i < currentEduContentIndex;
-                    const isCurrent = i === currentEduContentIndex;
+                    if (i < currentEduContentIndex) {
+                      bgColor =
+                        answersHistory[i] === true
+                          ? "rgb(83,234,205)"
+                          : "rgb(249,93,93)";
+                    }
 
-                    const bgColor =
-                      isCompleted || isCurrent
-                        ? colors[i % colors.length]
-                        : "rgb(198,198,198)";
+                    if (i === currentEduContentIndex) {
+                      bgColor = "rgb(237,242,25)";
+                    }
 
                     return (
                       <div
                         key={i}
                         className={`progress-square ${
-                          isCurrent ? "active" : ""
+                          i === currentEduContentIndex ? "active" : ""
                         }`}
                         style={{ backgroundColor: bgColor }}
                       />
@@ -475,8 +510,11 @@ export default function Course({
                       <div className="icon-box tooltip-container">
                         ?
                         <div className="tooltip-text">
-                          Lorem ipsum dolor sit amet, consectetuer adipiscing
-                          elit...
+                          Lorem ipsum dolor sit amet, consectetur adipiscing
+                          elit. Sed do eiusmod tempor incididunt ut labore et
+                          dolore magna aliqua. Ut enim ad minim veniam, quis
+                          nostrud exercitation ullamco laboris nisi ut aliquip
+                          ex ea commodo consequat.
                         </div>
                       </div>
                     </>
@@ -544,15 +582,9 @@ export default function Course({
               {!isTransitioning && (
                 <svg className="bar-connector">
                   <polyline
-                    points={
-                      percentage === 100
-                        ? `${barPoints[0]?.x},${barPoints[0]?.y - 20} ${
-                            barPoints[barPoints.length - 1]?.x
-                          },${barPoints[barPoints.length - 1]?.y + 20}`
-                        : barPoints
-                            .map((pt) => (pt ? `${pt.x},${pt.y}` : ""))
-                            .join(" ")
-                    }
+                    points={barPoints
+                      .map((pt) => (pt ? `${pt.x},${pt.y}` : ""))
+                      .join(" ")}
                     fill="none"
                     stroke={
                       percentage === 100 ? "rgb(83,234,205)" : "rgb(2,2,2)"
@@ -570,17 +602,15 @@ export default function Course({
                   return (
                     <div
                       key={index}
-                      className={`bar ${isCenter ? "center-bar" : ""}`}
+                      className="bar"
                       ref={(el) => (barRefs.current[index] = el)}
                       style={{
                         width: `${width}px`,
                         transform: `translateX(${barOffsets[index]}px)`,
-                        cursor: isCenter ? "default" : "grab",
+                        cursor: "grab",
                         transition: "transform 0.01s",
                       }}
-                      onMouseDown={
-                        isCenter ? undefined : (e) => handleMouseDown(e, index)
-                      }
+                      onMouseDown={(e) => handleMouseDown(e, index)}
                     />
                   );
                 })}
@@ -602,8 +632,14 @@ export default function Course({
                       <strong>QUY TẮC ALIGN</strong>
                     </h3>
                     <p className="completed-description">
-                      Lorem ipsum dolor sit amet, consectetuer adipiscing
-                      elit...
+                      Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+                      Sed do eiusmod tempor incididunt ut labore et dolore magna
+                      aliqua. Ut enim ad minim veniam, quis nostrud exercitation
+                      ullamco laboris nisi ut aliquip ex ea commodo consequat.
+                      Duis aute irure dolor in reprehenderit in voluptate velit
+                      esse cillum dolore eu fugiat nulla pariatur. Excepteur
+                      sint occaecat cupidatat non proident, sunt in culpa qui
+                      officia deserunt mollit anim id est laborum.
                     </p>
                   </div>
                 ) : (

@@ -45,3 +45,31 @@
   height: 24px;
   object-fit: contain;
 }
+
+/* ---------------- RESPONSIVE ---------------- */
+@media (max-width: 768px) {
+  .card {
+    width: 240px;
+    height: 180px;
+  }
+
+  .left-card {
+    transform: translateX(-150px);
+  }
+
+  .right-card {
+    transform: translateX(150px);
+  }
+
+  .status-icon {
+    bottom: -15px;
+    right: -15px;
+    width: 36px;
+    height: 36px;
+  }
+
+  .status-icon img {
+    width: 18px;
+    height: 18px;
+  }
+}

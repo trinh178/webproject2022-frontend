@@ -3,7 +3,9 @@
   height: 100%;
   font-family: "Bahnschrift", Arial, sans-serif;
   background-color: rgb(242, 242, 242);
-  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   padding: 2rem;
 
   .logo {
@@ -32,6 +34,10 @@
 
   .logo-part:nth-child(2) {
     margin-top: -10px;
+  }
+
+  .course-container {
+    width: 100%;
   }
 
   .bar-chart-container {
@@ -146,11 +152,29 @@
       }
 
       .completed-description {
+        max-width: 100%;
+        max-height: 120px;
         font-size: 16px;
         font-weight: 300;
-        color: #333;
+        color: rgb(0, 0, 0);
         line-height: 1.4;
-        max-width: 100%;
+        overflow-y: auto;
+        padding-right: 6px;
+        word-break: break-word;
+        white-space: normal;
+      }
+
+      .completed-description::-webkit-scrollbar {
+        width: 6px;
+      }
+
+      .completed-description::-webkit-scrollbar-thumb {
+        background: rgba(0, 0, 0, 0.3);
+        border-radius: 3px;
+      }
+
+      .completed-description::-webkit-scrollbar-track {
+        background: transparent;
       }
 
       @keyframes fadeIn {
@@ -186,8 +210,10 @@
     height: 646px;
     background-color: rgb(255, 255, 255);
     border-radius: 15px;
-    margin: 0 0 0 100px;
-    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0 auto;
 
     .screen-content {
       height: 85%;
@@ -415,8 +441,8 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    margin: 0 0 0 100px;
     position: relative;
+    margin: 0 auto;
 
     .report-icon {
       display: flex;
@@ -491,5 +517,79 @@
     padding: 0.5rem;
     border-radius: 4px;
     align-items: center;
+  }
+
+  /* ---------------- Responsive ---------------- */
+  @media (max-width: 1024px) {
+    .bar-chart-container,
+    .completion,
+    .next-screen,
+    .report-screen {
+      width: 85%;
+      height: auto;
+    }
+
+    .next-screen {
+      height: 560px;
+
+      .screen-content {
+        padding: 0px;
+      }
+    }
+
+    .completed-info {
+      width: 400px;
+      margin-left: 20px !important;
+    }
+
+    .report-screen {
+      height: 560px;
+    }
+  }
+
+  @media (max-width: 768px) {
+    padding: auto 0 auto 0;
+
+    .completion-content {
+      padding: 10px !important;
+
+      .instruction {
+        left: 28.5% !important;
+      }
+
+      .completed-info {
+        width: 240px;
+        margin-left: 0px !important;
+      }
+
+      .completed-title {
+        width: 248px !important;
+      }
+    }
+
+    .progress-bar {
+      gap: 16px !important;
+    }
+
+    .action-buttons {
+      flex-direction: column;
+      margin-top: -40px !important;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .completion-content {
+      .percentage {
+        font-size: 70px !important;
+      }
+
+      .instruction {
+        left: 38.5% !important;
+      }
+    }
+
+    .progress-bar {
+      gap: 16px !important;
+    }
   }
 }
