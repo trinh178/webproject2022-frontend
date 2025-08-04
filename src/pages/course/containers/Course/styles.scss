@@ -595,12 +595,16 @@
         }
 
         .instruction {
-          left: 38.5% !important;
+          left: 30.5% !important;
         }
 
         .completed-info {
-          max-width: 180px;
+          max-width: 200px;
           width: 100%;
+        }
+
+        .completed-title {
+          font-size: 30px;
         }
 
         .completed-description {
