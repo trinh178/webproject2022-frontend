@@ -389,10 +389,7 @@ export default function Course({
   };
 
   const totalQuestions = course.contents.length;
-  // Batch hiện tại (0 = batch đầu)
   const [currentBatch, setCurrentBatch] = useState(0);
-
-  // Index bắt đầu của batch hiện tại
   const batchStartIndex = currentBatch * totalSteps;
   // const totalQuestions = course.contents.reduce(
   //   (total, content) => total + content.questions.length,
