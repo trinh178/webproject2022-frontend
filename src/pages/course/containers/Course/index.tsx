@@ -692,7 +692,11 @@ export default function Course({
                     <>
                       Lỗi quy tắc Align
                       <div className="icon-box tooltip-container">
-                        ?
+                        <img
+                          src="/img/more-infor.png"
+                          alt="More info"
+                          className="more-info-icon"
+                        />
                         <div className="tooltip-text">
                           {currentEduContent?.theories?.[0]?.initialText ||
                             "Chưa có lý thuyết cho nội dung này"}
@@ -700,7 +704,20 @@ export default function Course({
                       </div>
                     </>
                   ) : (
-                    ""
+                    <>
+                      Lý thuyết
+                      <div className="icon-box tooltip-container">
+                        <img
+                          src="/img/more-infor.png"
+                          alt="More info"
+                          className="more-info-icon"
+                        />
+                        <div className="tooltip-text">
+                          {currentEduContent?.theories?.[0]?.initialText ||
+                            "Chưa có lý thuyết cho nội dung này"}
+                        </div>
+                      </div>
+                    </>
                   )}
                 </span>
 
