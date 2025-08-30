@@ -251,6 +251,8 @@ export default function Course({
   const [screenStage, setScreenStage] = useState<
     "bar-chart" | "quiz" | "completed"
   >("bar-chart");
+  const [allowSkip, setAllowSkip] = useState(false);
+  const [showQuizIntro, setShowQuizIntro] = useState(false);
 
   const drawCanvas = () => {
     const canvas = canvasRef.current;
@@ -475,7 +477,7 @@ export default function Course({
     setIsTransitioning(true);
     setTimeout(() => {
       if (next === "quiz") {
-        setTimeLeft(20 * 60);
+        setShowQuizIntro(true);
       }
       setScreenStage(next);
       setIsTransitioning(false);
@@ -495,6 +497,17 @@ export default function Course({
     null
   );
   const [answersHistory, setAnswersHistory] = useState<boolean[]>([]);
+
+  useEffect(() => {
+    if (screenStage === "bar-chart") {
+      setAllowSkip(false);
+      const timer = setTimeout(() => {
+        setAllowSkip(true);
+      }, 60000);
+
+      return () => clearTimeout(timer);
+    }
+  }, [screenStage]);
 
   useEffect(() => {
     if (screenStage === "completed") return;
@@ -608,6 +621,24 @@ export default function Course({
               isTransitioning ? "fade-out" : "fade-in"
             }`}
           >
+            {showQuizIntro && (
+              <div className="popup-overlay">
+                <div className="popup-content">
+                  <h3>Chọn đáp án đúng với quy tắc Align</h3>
+                  <Button
+                    className=""
+                    iconSrc="/img/right.png"
+                    text="Bắt đầu"
+                    bgColor="rgb(83,234,205)"
+                    onClick={() => {
+                      setShowQuizIntro(false);
+                      setTimeLeft(20 * 60);
+                    }}
+                  />
+                </div>
+              </div>
+            )}
+
             <div className="screen-content">
               <div className="header-section">
                 <div className="header-top">
@@ -663,11 +694,8 @@ export default function Course({
                       <div className="icon-box tooltip-container">
                         ?
                         <div className="tooltip-text">
-                          Lorem ipsum dolor sit amet, consectetur adipiscing
-                          elit. Sed do eiusmod tempor incididunt ut labore et
-                          dolore magna aliqua. Ut enim ad minim veniam, quis
-                          nostrud exercitation ullamco laboris nisi ut aliquip
-                          ex ea commodo consequat.
+                          {currentEduContent?.theories?.[0]?.initialText ||
+                            "Chưa có lý thuyết cho nội dung này"}
                         </div>
                       </div>
                     </>
@@ -776,17 +804,19 @@ export default function Course({
               </div>
 
               <div className="completion-button">
-                <Button
-                  className={`animated-button ${
-                    percentage === 100 ? "completed" : ""
-                  }`}
-                  iconSrc="/img/right.png"
-                  text={percentage === 100 ? "Tiếp tục" : "Bỏ qua"}
-                  bgColor={
-                    percentage === 100 ? "rgb(83,234,205)" : "rgb(249,93,93)"
-                  }
-                  onClick={() => transitionToScreen("quiz")}
-                />
+                {percentage === 100 || allowSkip ? (
+                  <Button
+                    className={`animated-button ${
+                      percentage === 100 ? "completed" : ""
+                    }`}
+                    iconSrc="/img/right.png"
+                    text={percentage === 100 ? "Tiếp tục" : "Bỏ qua"}
+                    bgColor={
+                      percentage === 100 ? "rgb(83,234,205)" : "rgb(249,93,93)"
+                    }
+                    onClick={() => transitionToScreen("quiz")}
+                  />
+                ) : null}
               </div>
             </div>
           </div>
