@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import "./styles.scss";
-import IconButton from "../IconButton";
+import IconButton from "../../../../components/IconButton";
 import { StudyAction } from "../../containers/Course"; // Adjust path if needed
 import { SamuiSlideControlsProps } from "shared/components/SamuiSlideProvider";
 
@@ -10,6 +10,12 @@ interface CourseIntroProps {
   setInitialStudyAction: (action: StudyAction) => void;
   slideControlsRef: React.RefObject<SamuiSlideControlsProps>;
   courseLoading: boolean;
+  selectedRule: "align" | "proximity" | "repetition" | "contrast" | null;
+  setSelectedRule: React.Dispatch<
+    React.SetStateAction<
+      "align" | "proximity" | "repetition" | "contrast" | null
+    >
+  >;
 }
 
 const iconPaths = ["/img/home.png", "/img/option.png", "/img/flag.png"];
@@ -20,27 +26,36 @@ const cards = [
     title: "QUY TẮC ALIGN",
     img: "/img/plants.png",
     difficulty: "Dễ",
-    completion: "100%",
+    completion: "0%",
     action: "STUDY_FROM_SCRATCH" as StudyAction,
     bg: "align",
   },
   {
-    key: "group",
-    title: "QUY TẮC NHÓM",
+    key: "proximity",
+    title: "QUY TẮC PROXIMITY",
     img: "/img/group.png",
     difficulty: "Dễ",
-    completion: "100%",
+    completion: "0%",
     action: "CONTINUE_STUDY" as StudyAction,
-    bg: "group",
+    bg: "proximity",
   },
   {
-    key: "build",
-    title: "QUY TẮC LẶP",
+    key: "repetition",
+    title: "QUY TẮC REPETITION",
     img: "/img/flowers.png",
     difficulty: "Dễ",
-    completion: "100%",
+    completion: "0%",
     action: "STUDY_UNFINISHED_CONTENTS" as StudyAction,
-    bg: "build",
+    bg: "repetition",
+  },
+  {
+    key: "contrast",
+    title: "QUY TẮC CONTRAST",
+    img: "/img/flowers.png",
+    difficulty: "Dễ",
+    completion: "0%",
+    action: "STUDY_UNFINISHED_CONTENTS" as StudyAction,
+    bg: "contrast",
   },
 ];
 
@@ -50,6 +65,8 @@ const CourseIntro: React.FC<CourseIntroProps> = ({
   setInitialStudyAction,
   slideControlsRef,
   courseLoading,
+  selectedRule,
+  setSelectedRule,
 }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isMobile, setIsMobile] = useState(
@@ -58,10 +75,13 @@ const CourseIntro: React.FC<CourseIntroProps> = ({
   const [direction, setDirection] = useState<"left" | "right">("right");
   const [hasInteracted, setHasInteracted] = useState(false);
 
-  const handleCardClick = (studyAction: StudyAction) => {
+  const handleCardClick = (studyAction: StudyAction, ruleKey: string) => {
     fetchCourse()
       .then(() => {
         setInitialStudyAction(studyAction);
+        setSelectedRule(
+          ruleKey as "align" | "contrast" | "proximity" | "repetition"
+        );
         slideControlsRef.current?.slideNext();
       })
       .catch((err) => {
@@ -77,7 +97,17 @@ const CourseIntro: React.FC<CourseIntroProps> = ({
     return () => window.removeEventListener("resize", checkMobile);
   }, []);
 
-  const visibleCards = isMobile ? [cards[currentIndex]] : cards;
+  const getVisibleCards = () => {
+    if (isMobile) return [cards[currentIndex]];
+
+    const result = [];
+    for (let i = 0; i < 3; i++) {
+      result.push(cards[(currentIndex + i) % cards.length]);
+    }
+    return result;
+  };
+
+  const visibleCards = getVisibleCards();
 
   const handlePrev = () => {
     setDirection("left");
@@ -116,7 +146,7 @@ const CourseIntro: React.FC<CourseIntroProps> = ({
               className={`section-card ${card.bg} ${
                 hasInteracted ? `slide-${direction}` : ""
               }`}
-              onClick={() => handleCardClick(card.action)}
+              onClick={() => handleCardClick(card.action, card.key)}
             >
               <img src={card.img} alt={card.title} />
               <div className="content-container">

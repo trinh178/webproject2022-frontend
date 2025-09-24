@@ -140,6 +140,9 @@ export default function Loader() {
   }, []);
 
   const samuiSlideControlsRef = React.useRef<SamuiSlideControlsProps>(null);
+  const [selectedRule, setSelectedRule] = React.useState<
+    "align" | "proximity" | "repetition" | "contrast" | null
+  >(null);
 
   return (
     <SamuiSlideProvider
@@ -154,6 +157,8 @@ export default function Loader() {
               setInitialStudyAction={setInitialStudyAction}
               slideControlsRef={samuiSlideControlsRef}
               courseLoading={courseLoader.loading}
+              selectedRule={selectedRule}
+              setSelectedRule={setSelectedRule}
             />
           ),
         },
@@ -169,6 +174,7 @@ export default function Loader() {
                 latestCourseReport={latestCourseReportLoader.value}
                 initialtotalCourseReports={totalCourseReportsLoader.value}
                 initialStudyAction={initialStudyAction}
+                selectedRule={selectedRule}
                 onGoToIntro={() => {
                   samuiSlideControlsRef.current?.slideTo(0);
                 }}

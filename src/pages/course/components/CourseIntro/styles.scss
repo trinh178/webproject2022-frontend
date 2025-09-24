@@ -87,12 +87,16 @@
       background-color: rgb(83, 234, 205);
     }
 
-    &.group {
+    &.proximity {
       background-color: rgb(237, 242, 25);
     }
 
-    &.build {
+    &.repetition {
       background-color: rgb(249, 93, 93);
+    }
+
+    &.contrast {
+      background-color: rgb(249, 93, 176);
     }
 
     img {
@@ -113,7 +117,7 @@
 
     h2 {
       margin: 0;
-      font-size: 30px;
+      font-size: 29px;
       font-weight: bold;
       text-shadow: 0.3px 0 rgb(0, 0, 0), -0.3px 0 rgb(0, 0, 0),
         0 0.3px rgb(0, 0, 0), 0 -0.3px rgb(0, 0, 0);

@@ -33,20 +33,20 @@ const Card: React.FC<CardProps> = ({
 
   return (
     <div
-      className={`card 
-        ${isLeft ? "left-card" : "right-card"}
-        ${isSelected ? "card-selected" : ""}
-        ${isActive ? "card-merge" : ""}
+      className={`edu-card 
+        ${isLeft ? "edu-card-left" : "edu-card-right"}
+        ${isSelected ? "edu-card-selected" : ""}
+        ${isActive ? "edu-card-merge" : ""}
       `}
       style={{ zIndex }}
       onClick={() => onSelect(index)}
       onTransitionEnd={handleTransitionEnd}
     >
-      <img src={imageUrl} />
+      <img src={imageUrl} alt="card" />
 
       {showStatusIcon && (
         <div
-          className="status-icon"
+          className="edu-card-status-icon"
           style={{
             backgroundColor: isCorrect ? "rgb(83,234,205)" : "rgb(249,93,93)",
           }}
