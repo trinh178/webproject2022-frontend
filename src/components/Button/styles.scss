@@ -1,0 +1,39 @@
+.button-container {
+  width: fit-content;
+  height: 40px;
+  font-size: 24px;
+  font-weight: bold;
+  color: rgb(18, 26, 33);
+  border: 2px solid rgb(18, 26, 33);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 5px;
+  box-shadow: 4px 4px 0px rgb(18, 26, 33);
+  cursor: pointer;
+
+  user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+  -webkit-tap-highlight-color: transparent;
+
+  .icon {
+    width: 16px;
+    height: auto;
+    display: inline-block;
+    margin-right: 20px;
+    pointer-events: none;
+  }
+
+  .text {
+    display: inline-block;
+    line-height: 1;
+    margin-right: 20px;
+    pointer-events: none;
+  }
+
+  &:active {
+    box-shadow: 2px 2px 0px rgb(18, 26, 33);
+    transform: translate(2px, 2px);
+  }
+}

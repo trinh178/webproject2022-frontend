@@ -1,0 +1,111 @@
+.edu-card {
+  width: 320px;
+  height: 240px;
+  background-color: #fff;
+  border: none;
+  border-radius: 0 !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 10px;
+  transition: all 0.7s ease;
+  position: absolute;
+  cursor: pointer;
+}
+
+.edu-card-left {
+  transform: translateX(-200px);
+}
+
+.edu-card-right {
+  transform: translateX(200px);
+}
+
+.edu-card-merge.edu-card-left,
+.edu-card-merge.edu-card-right {
+  transform: translateX(0);
+}
+
+.edu-card-selected {
+  box-shadow: 3px 3px 0px rgb(22, 21, 21);
+}
+
+.edu-card img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+
+.edu-card-status-icon {
+  position: absolute;
+  bottom: -20px;
+  right: -25px;
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.edu-card-status-icon img {
+  width: 24px;
+  height: 24px;
+  object-fit: contain;
+}
+
+/* ---------------- RESPONSIVE ---------------- */
+@media (max-width: 768px) {
+  .edu-card {
+    width: 240px;
+    height: 180px;
+  }
+
+  .edu-card-left {
+    transform: translateX(-150px);
+  }
+
+  .edu-card-right {
+    transform: translateX(150px);
+  }
+
+  .edu-card-status-icon {
+    bottom: -15px;
+    right: -15px;
+    width: 36px;
+    height: 36px;
+  }
+
+  .edu-card-status-icon img {
+    width: 18px;
+    height: 18px;
+  }
+}
+
+@media (max-width: 480px) {
+  .edu-card {
+    width: 180px;
+    height: 135px;
+  }
+
+  .edu-card-left {
+    transform: translateX(-100px);
+  }
+
+  .edu-card-right {
+    transform: translateX(100px);
+  }
+
+  .edu-card-status-icon {
+    bottom: -12px;
+    right: -12px;
+    width: 28px;
+    height: 28px;
+  }
+
+  .edu-card-status-icon img {
+    width: 14px;
+    height: 14px;
+  }
+}

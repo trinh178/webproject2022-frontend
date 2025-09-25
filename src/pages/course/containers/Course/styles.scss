@@ -1,20 +1,460 @@
 .course-page {
+  width: 100%;
+  height: 100%;
+  font-family: "Bahnschrift", Arial, sans-serif;
+  background-color: rgb(242, 242, 242);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+
+  .logo {
+    width: 64px;
+    position: absolute;
+    top: 1.5rem;
+    left: 1.5rem;
+    font-size: 36px;
+    font-weight: 700;
+    text-shadow: 0.3px 0 rgb(0, 0, 0), -0.3px 0 rgb(0, 0, 0),
+      0 0.3px rgb(0, 0, 0), 0 -0.3px rgb(0, 0, 0);
+    color: rgb(0, 0, 0);
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    line-height: 1.1;
+    transform: scaleX(0.7);
+    transform-origin: left;
+    cursor: pointer;
+  }
+
+  .logo-part {
+    display: block;
+    letter-spacing: 0px;
+  }
+
+  .logo-part:nth-child(2) {
+    margin-top: -10px;
+  }
+
+  .course-container {
     width: 100%;
-    height: 100%;
+  }
 
-    .detail-educontent {
-        background-color: white;
-        padding: 2vh 2vw;
+  .next-screen {
+    width: 1320px;
+    height: 646px;
+    background-color: rgb(255, 255, 255);
+    border-radius: 15px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0 auto;
 
-        .title {
-            font-size: 1.2em;
-            font-weight: bold;
-            text-transform: uppercase;
-        }
-        .slide-container {
-            padding-top: 2vh;
-            overflow: hidden;
-            height: 90%;
-        }
+    .screen-content {
+      height: 85%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      padding: 50px;
     }
+
+    .header-section {
+      width: fit-content;
+      display: flex;
+      flex-direction: column;
+
+      .header-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .course-title {
+        margin: 0;
+        font-size: 40px;
+        font-weight: bold;
+        color: rgb(0, 0, 0);
+        display: inline-block;
+        letter-spacing: 0px;
+        transform: scaleX(0.7);
+        transform-origin: left;
+
+        strong {
+          font-weight: bold;
+          text-shadow: 0.1px 0 rgb(0, 0, 0), -0.1px 0 rgb(0, 0, 0),
+            0 0.1px rgb(0, 0, 0), 0 -0.1px rgb(0, 0, 0);
+        }
+      }
+
+      .progress-number {
+        font-size: 14px;
+        color: rgb(255, 255, 255);
+        background-color: rgb(22, 21, 21);
+        padding: 8px 8px 5px 8px;
+      }
+
+      .progress-bar {
+        width: fit-content;
+        height: 20px;
+        display: flex;
+        flex-direction: row;
+        background-color: rgb(255, 255, 255);
+        padding: 4px 2px 0 2px;
+        margin-top: 15px;
+        gap: 24px;
+
+        .progress-square {
+          width: 12px;
+          height: 12px;
+          position: relative;
+          transition: all 0.2s ease;
+        }
+
+        .progress-square.active {
+          top: -5px;
+          left: -4px;
+          width: 16px;
+          height: 16px;
+          border: 2.2px solid #0b0f10;
+          box-shadow: 4px 4px 0px rgb(18, 26, 33);
+          transform: translate(2px, 2px);
+        }
+      }
+    }
+  }
+
+  .instruction-section {
+    width: fit-content;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 40px;
+    margin: 0 auto;
+
+    .instruction {
+      height: 24px;
+      font-size: 16px;
+      font-weight: 300;
+      color: rgb(0, 0, 0);
+      display: flex;
+      align-items: center;
+      text-align: center;
+      gap: 25px;
+      margin-bottom: 10px;
+
+      .icon-box {
+        width: 34px;
+        height: 40px;
+        border: 3px solid rgb(18, 26, 33);
+        font-weight: bold;
+        font-size: 24px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 3px 3px 0px rgb(18, 26, 33);
+        padding-top: 2px;
+        position: relative;
+        cursor: help;
+
+        .tooltip-text {
+          visibility: hidden;
+          opacity: 0;
+          position: absolute;
+          bottom: 110%;
+          left: 50%;
+          transform: translateX(-50%);
+          background-color: rgb(255, 255, 255);
+          color: rgb(0, 0, 0);
+          border: 2px solid rgb(0, 0, 0);
+          border-radius: 6px;
+          padding: 10px 14px;
+          max-width: 360px;
+          width: max-content;
+          font-size: 14px;
+          line-height: 1.4;
+          z-index: 10;
+          transition: opacity 0.3s ease;
+          box-shadow: 0 0 6px rgba(0, 0, 0, 0.15);
+          text-align: left;
+          white-space: normal;
+        }
+
+        &:hover .tooltip-text {
+          visibility: visible;
+          opacity: 1;
+        }
+      }
+    }
+
+    .card-container {
+      height: 260px;
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      position: relative;
+    }
+
+    .action-buttons {
+      width: fit-content;
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      margin-top: 30px;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+
+    .action-buttons.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .timer-container {
+    display: flex;
+    align-items: center;
+    position: absolute;
+    right: 40px;
+    bottom: 6%;
+    gap: 10px;
+
+    .timer-icon {
+      height: 30px;
+      display: flex;
+      align-items: center;
+      object-fit: contain;
+    }
+
+    .timer {
+      font-size: 16px;
+      font-weight: 300;
+      color: rgb(33, 33, 33);
+      padding-top: 5px;
+    }
+  }
+
+  .fade-wrapper {
+    animation: none;
+    transition: opacity 0.5s ease, transform 0.5s ease;
+  }
+
+  .fade-out {
+    animation: fadeOut 0.5s ease forwards;
+  }
+
+  .fade-in {
+    animation: fadeIn 0.5s ease forwards;
+  }
+
+  @keyframes fadeOut {
+    0% {
+      opacity: 1;
+    }
+    100% {
+      opacity: 0;
+    }
+  }
+
+  @keyframes fadeIn {
+    0% {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0px);
+    }
+  }
+
+  .report-screen {
+    width: 1320px;
+    height: 646px;
+    background-color: rgb(255, 255, 255);
+    border-radius: 15px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    margin: 0 auto;
+
+    .report-icon {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    .star-circle {
+      background-color: rgb(83, 234, 205);
+      width: 85px;
+      height: 85px;
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .star-left {
+      width: 20px;
+      height: auto;
+    }
+
+    .star-center {
+      width: 65px;
+      height: auto;
+    }
+
+    .star-right {
+      width: 25px;
+      height: auto;
+    }
+
+    .star-shifted {
+      transform: translateY(20px);
+    }
+
+    .report-title {
+      font-size: 25px;
+      text-align: center;
+    }
+
+    .report-stats {
+      display: flex;
+      justify-content: center;
+      gap: 40px;
+      margin: 40px 0;
+
+      .stat-label {
+        font-size: 14px;
+      }
+
+      .stat-value {
+        font-size: 40px;
+      }
+    }
+
+    .report-buttons {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 25px;
+    }
+  }
+
+  .course-icons {
+    position: absolute;
+    bottom: 1rem;
+    left: 1rem;
+    display: flex;
+    gap: 0.5rem;
+    z-index: 1;
+    padding: 0.5rem;
+    border-radius: 4px;
+    align-items: center;
+  }
+
+  .popup-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+  }
+
+  .popup-content {
+    background: white;
+    padding: 24px 32px;
+    border-radius: 12px;
+    text-align: center;
+    max-width: 420px;
+    box-shadow: 0px 6px 20px rgba(0, 0, 0, 0.2);
+  }
+
+  .popup-content h3 {
+    margin-bottom: 12px;
+  }
+
+  .more-info-icon {
+    width: 25px;
+  }
+
+  /* ---------------- Responsive ---------------- */
+  @media (max-width: 1024px) {
+    .canvas-container,
+    .completion,
+    .next-screen,
+    .report-screen {
+      width: 85%;
+      height: auto;
+    }
+
+    .next-screen {
+      height: 560px;
+
+      .screen-content {
+        padding: 0px;
+      }
+    }
+
+    .completed-info {
+      width: 400px;
+      margin-left: 20px !important;
+    }
+
+    .report-screen {
+      height: 560px;
+    }
+  }
+
+  @media (max-width: 768px) {
+    padding: auto 0 auto 0;
+
+    .progress-bar {
+      gap: 16px !important;
+    }
+
+    .action-buttons {
+      flex-direction: column;
+      margin-top: -40px !important;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .next-screen,
+    .report-screen {
+      width: 100%;
+    }
+
+    .progress-bar {
+      gap: 16px !important;
+    }
+
+    .screen-content {
+      justify-content: flex-start !important;
+    }
+
+    .instruction-section {
+      padding-top: 30px;
+
+      .tooltip-text {
+        width: 250px !important;
+      }
+    }
+
+    .card-container {
+      height: 220px !important;
+    }
+
+    .report-title {
+      font-size: 19px !important;
+    }
+
+    .report-buttons {
+      flex-direction: column;
+    }
+  }
 }
