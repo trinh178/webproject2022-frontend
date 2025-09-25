@@ -24,8 +24,24 @@ const RepetitionCanvas: React.FC<RepetitionCanvasProps> = ({ onContinue }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
-  const [allowSkip, setAllowSkip] = useState(false);
+  const rowsRef = useRef<Row[]>([]);
 
+  // state UI
+  const [percentage, setPercentage] = useState(0);
+  const [hasCompletedOnce, setHasCompletedOnce] = useState(
+    localStorage.getItem("repetitionCompletedOnce") === "1"
+  );
+
+  // ref cho logic kéo
+  const isDraggingRef = useRef(false);
+  const activeRowIndexRef = useRef<number | null>(null);
+  const dragStartXRef = useRef(0);
+  const initialOffsetXRef = useRef(0);
+
+  // ref cho hover
+  const hoveredRowIndexRef = useRef<number | null>(null);
+
+  // constants
   const NUM_SHAPES_IN_VIEW = 3;
   const SHAPE_SIZE = 50;
   const SHAPE_GAP = 30;
@@ -35,17 +51,6 @@ const RepetitionCanvas: React.FC<RepetitionCanvasProps> = ({ onContinue }) => {
 
   const GRAY_COLOR = "#d1d5db";
   const GREEN_COLOR = "#10b981";
-
-  const [rows, setRows] = useState<Row[]>([]);
-  const [activeRowIndex, setActiveRowIndex] = useState<number | null>(null);
-  const [hoveredRowIndex, setHoveredRowIndex] = useState<number | null>(null);
-  const [isDragging, setIsDragging] = useState(false);
-  const [dragStartX, setDragStartX] = useState(0);
-  const [initialOffsetX, setInitialOffsetX] = useState(0);
-  const [percentage, setPercentage] = useState(0);
-  const [hasCompletedOnce, setHasCompletedOnce] = useState(
-    localStorage.getItem("repetitionCompletedOnce") === "1"
-  );
 
   const INSTRUCTION_DEFAULT =
     "Kéo các hàng để căn đúng mẫu lặp mục tiêu vào giữa (đạt 100%).";
@@ -96,10 +101,10 @@ const RepetitionCanvas: React.FC<RepetitionCanvasProps> = ({ onContinue }) => {
   };
 
   const initRows = () => {
-    const containerHeight = 400;
+    const containerHeight = containerRef.current?.offsetHeight || 400;
     const startY = (containerHeight - 4 * ROW_HEIGHT) / 2;
 
-    const initialRows: Row[] = [
+    rowsRef.current = [
       {
         y: startY,
         isDraggable: false,
@@ -131,8 +136,6 @@ const RepetitionCanvas: React.FC<RepetitionCanvasProps> = ({ onContinue }) => {
         targetPatternIndex: 1,
       },
     ];
-
-    setRows(initialRows);
   };
 
   const draw = () => {
@@ -153,7 +156,7 @@ const RepetitionCanvas: React.FC<RepetitionCanvasProps> = ({ onContinue }) => {
     const visualViewportWidth = shapesViewportWidth + VIEWPORT_PADDING * 2;
     const visualViewportX = shapesViewportX - VIEWPORT_PADDING;
 
-    rows.forEach((row, index) => {
+    rowsRef.current.forEach((row, index) => {
       ctx.save();
 
       if (row.isDraggable) {
@@ -166,8 +169,10 @@ const RepetitionCanvas: React.FC<RepetitionCanvasProps> = ({ onContinue }) => {
         const singlePatternWidth =
           NUM_SHAPES_IN_VIEW * (SHAPE_SIZE + SHAPE_GAP);
         const fullTapeWidth = singlePatternWidth * row.patterns.length;
+
+        const userOffset = row.offsetX;
         const baseOffset =
-          ((row.offsetX % fullTapeWidth) + fullTapeWidth) % fullTapeWidth;
+          ((userOffset % fullTapeWidth) + fullTapeWidth) % fullTapeWidth;
 
         const numTapesToDraw = 4;
         for (
@@ -196,7 +201,12 @@ const RepetitionCanvas: React.FC<RepetitionCanvasProps> = ({ onContinue }) => {
 
       ctx.restore();
 
-      if (row.isDraggable && hoveredRowIndex === index && !isDragging) {
+      // highlight nét đứt khi hover
+      if (
+        row.isDraggable &&
+        hoveredRowIndexRef.current === index &&
+        !isDraggingRef.current
+      ) {
         ctx.strokeStyle = "#9ca3af";
         ctx.lineWidth = 2;
         ctx.setLineDash([5, 5]);
@@ -209,12 +219,21 @@ const RepetitionCanvas: React.FC<RepetitionCanvasProps> = ({ onContinue }) => {
         ctx.setLineDash([]);
       }
     });
+
+    // mũi tên khi drag
+    if (isDraggingRef.current) {
+      const arrowY = canvasHeight - 30;
+      ctx.font = "24px Inter";
+      ctx.textAlign = "center";
+      ctx.fillStyle = "#a1a1aa";
+      ctx.fillText("<------->", canvasWidth / 2, arrowY);
+    }
   };
 
   const calculateProgress = () => {
     let totalCorrectness = 0;
 
-    rows.forEach((row) => {
+    rowsRef.current.forEach((row) => {
       if (
         !row.isDraggable ||
         !row.patterns ||
@@ -249,7 +268,6 @@ const RepetitionCanvas: React.FC<RepetitionCanvasProps> = ({ onContinue }) => {
     }
   };
 
-  // Tương tác chuột / touch
   const getMousePos = (e: MouseEvent | TouchEvent) => {
     const canvas = canvasRef.current;
     if (!canvas) return { x: 0, y: 0 };
@@ -261,54 +279,67 @@ const RepetitionCanvas: React.FC<RepetitionCanvasProps> = ({ onContinue }) => {
 
   const handlePointerDown = (e: React.MouseEvent | React.TouchEvent) => {
     const m = getMousePos(e.nativeEvent);
-    const clickedIndex = rows.findIndex(
+    const clickedIndex = rowsRef.current.findIndex(
       (row) =>
         row.isDraggable && m.y >= row.y - 15 && m.y <= row.y + SHAPE_SIZE + 15
     );
     if (clickedIndex !== -1) {
-      setIsDragging(true);
-      setActiveRowIndex(clickedIndex);
-      setDragStartX(m.x);
-      setInitialOffsetX(rows[clickedIndex].offsetX || 0);
+      isDraggingRef.current = true;
+      activeRowIndexRef.current = clickedIndex;
+      dragStartXRef.current = m.x;
+      initialOffsetXRef.current = rowsRef.current[clickedIndex].offsetX || 0;
+
+      if (canvasRef.current) {
+        canvasRef.current.style.cursor = "grabbing";
+      }
       e.preventDefault?.();
     }
   };
 
   const handlePointerMove = (e: MouseEvent | TouchEvent) => {
     const m = getMousePos(e);
-    setHoveredRowIndex(
-      rows.findIndex(
-        (row) =>
-          row.isDraggable && m.y >= row.y - 15 && m.y <= row.y + SHAPE_SIZE + 15
-      ) || null
+    const index = rowsRef.current.findIndex(
+      (row) =>
+        row.isDraggable && m.y >= row.y - 15 && m.y <= row.y + SHAPE_SIZE + 15
     );
+    hoveredRowIndexRef.current = index === -1 ? null : index;
 
-    if (!isDragging || activeRowIndex === null) return;
-    const deltaX = m.x - dragStartX;
-    let newOffset = initialOffsetX + deltaX;
+    // cursor giống HTML gốc
+    if (!isDraggingRef.current) {
+      if (index !== -1 && canvasRef.current) {
+        canvasRef.current.style.cursor = "grab";
+      } else if (canvasRef.current) {
+        canvasRef.current.style.cursor = "default";
+      }
+    }
+
+    if (!isDraggingRef.current || activeRowIndexRef.current === null) return;
+
+    const deltaX = m.x - dragStartXRef.current;
+    let newOffset = initialOffsetXRef.current + deltaX;
     newOffset = Math.round(newOffset / SNAP_GRID_SIZE) * SNAP_GRID_SIZE;
 
-    setRows((prev) => {
-      const updated = [...prev];
-      if (updated[activeRowIndex].offsetX !== undefined) {
-        updated[activeRowIndex].offsetX = newOffset;
-      }
-      return updated;
-    });
+    rowsRef.current[activeRowIndexRef.current].offsetX = newOffset;
   };
 
   const handlePointerUp = () => {
-    setIsDragging(false);
-    setActiveRowIndex(null);
+    isDraggingRef.current = false;
+    activeRowIndexRef.current = null;
+    if (canvasRef.current) {
+      canvasRef.current.style.cursor = "grab";
+    }
   };
 
   useEffect(() => {
     initRows();
     const canvas = canvasRef.current;
     const dpi = window.devicePixelRatio || 1;
-    if (canvas) {
-      canvas.width = (containerRef.current?.offsetWidth || 800) * dpi;
-      canvas.height = 400 * dpi;
+    if (canvas && containerRef.current) {
+      const w = containerRef.current.offsetWidth;
+      const h = containerRef.current.offsetHeight;
+
+      canvas.width = w * dpi;
+      canvas.height = h * dpi;
       const ctx = canvas.getContext("2d");
       ctx?.scale(dpi, dpi);
     }
@@ -324,8 +355,8 @@ const RepetitionCanvas: React.FC<RepetitionCanvasProps> = ({ onContinue }) => {
     window.addEventListener("mouseup", handlePointerUp);
     window.addEventListener("touchmove", handlePointerMove, { passive: false });
     window.addEventListener("touchend", handlePointerUp);
-
     window.addEventListener("resize", initRows);
+
     return () => {
       window.removeEventListener("mousemove", handlePointerMove);
       window.removeEventListener("mouseup", handlePointerUp);
@@ -333,15 +364,19 @@ const RepetitionCanvas: React.FC<RepetitionCanvasProps> = ({ onContinue }) => {
       window.removeEventListener("touchend", handlePointerUp);
       window.removeEventListener("resize", initRows);
     };
-  }, [activeRowIndex, isDragging]);
+  }, []);
 
   return (
     <div className="fade-wrapper fade-in">
       <div className="canvas-container" ref={containerRef}>
         <canvas
           ref={canvasRef}
-          height={400}
-          style={{ backgroundColor: "transparent" }}
+          style={{
+            backgroundColor: "transparent",
+            width: "100%",
+            height: "100%",
+            cursor: "grab",
+          }}
           onMouseDown={handlePointerDown}
           onTouchStart={handlePointerDown}
         />
@@ -362,7 +397,7 @@ const RepetitionCanvas: React.FC<RepetitionCanvasProps> = ({ onContinue }) => {
         </div>
 
         <div className="completion-button">
-          {percentage === 100 || allowSkip ? (
+          {(percentage === 100 || hasCompletedOnce) && (
             <Button
               className={`animated-button ${
                 percentage === 100 ? "completed" : ""
@@ -374,7 +409,7 @@ const RepetitionCanvas: React.FC<RepetitionCanvasProps> = ({ onContinue }) => {
               }
               onClick={onContinue}
             />
-          ) : null}
+          )}
         </div>
       </div>
     </div>
